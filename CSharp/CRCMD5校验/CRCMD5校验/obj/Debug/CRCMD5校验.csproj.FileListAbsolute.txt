@@ -1,0 +1,3 @@
+D:\其他项目\CRCMD5校验\CRCMD5校验\bin\Debug\WindowsFormsApplication1.exe.config
+D:\其他项目\CRCMD5校验\CRCMD5校验\obj\Debug\WindowsFormsApplication1.exe
+D:\其他项目\CRCMD5校验\CRCMD5校验\obj\Debug\WindowsFormsApplication1.pdb
