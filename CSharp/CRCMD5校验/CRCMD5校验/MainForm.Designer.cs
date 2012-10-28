@@ -29,19 +29,23 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.thread = new System.ComponentModel.BackgroundWorker();
+            this.mWorker = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.openBtn = new System.Windows.Forms.Button();
             this.inputRect = new System.Windows.Forms.TextBox();
+            this.workProgress = new System.Windows.Forms.ProgressBar();
+            this.outRect = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // thread
+            // mWorker
             // 
-            this.thread.WorkerReportsProgress = true;
-            this.thread.WorkerSupportsCancellation = true;
-            this.thread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.onWorkStarted);
-            this.thread.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.onProgressChanged);
-            this.thread.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.onWorkCompleted);
+            this.mWorker.WorkerReportsProgress = true;
+            this.mWorker.WorkerSupportsCancellation = true;
+            this.mWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.onWorkStarted);
+            this.mWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.onProgressChanged);
+            this.mWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.onWorkCompleted);
             // 
             // openFileDialog
             // 
@@ -64,10 +68,35 @@
             this.inputRect.DragDrop += new System.Windows.Forms.DragEventHandler(this.dragDrop);
             this.inputRect.DragEnter += new System.Windows.Forms.DragEventHandler(this.dragEnter);
             // 
+            // workProgress
+            // 
+            resources.ApplyResources(this.workProgress, "workProgress");
+            this.workProgress.MarqueeAnimationSpeed = 10;
+            this.workProgress.Name = "workProgress";
+            // 
+            // outRect
+            // 
+            resources.ApplyResources(this.outRect, "outRect");
+            this.outRect.Name = "outRect";
+            // 
+            // label1
+            // 
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.Name = "label1";
+            // 
+            // label2
+            // 
+            resources.ApplyResources(this.label2, "label2");
+            this.label2.Name = "label2";
+            // 
             // MainForm
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.outRect);
+            this.Controls.Add(this.workProgress);
             this.Controls.Add(this.inputRect);
             this.Controls.Add(this.openBtn);
             this.Name = "MainForm";
@@ -78,10 +107,14 @@
 
         #endregion
 
-        private System.ComponentModel.BackgroundWorker thread;
+        private System.ComponentModel.BackgroundWorker mWorker;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.Button openBtn;
         private System.Windows.Forms.TextBox inputRect;
+        private System.Windows.Forms.ProgressBar workProgress;
+        private System.Windows.Forms.TextBox outRect;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }
 
