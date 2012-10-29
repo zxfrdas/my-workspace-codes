@@ -36,6 +36,7 @@ namespace CRCMD5校验
 
         private void onWorkStarted(object sender, DoWorkEventArgs e)
         {
+            int offset = 0;
             hash = MD5.Create();
             buffer = new byte[BUFFER_LENGTH];
             fs = File.Open(filePath, FileMode.Open);
@@ -44,9 +45,10 @@ namespace CRCMD5校验
                 fs.Read(buffer, 0, buffer.Length);
                 hash.TransformBlock(buffer, 0, buffer.Length, buffer, 0);
                 mWorker.ReportProgress((int)fs.Position);
+                offset = (int) fs.Length - (int) fs.Position;
             }
             fs.Read(buffer, 0, buffer.Length);
-            hash.TransformFinalBlock(buffer, 0, Convert.ToInt32(fs.Length - fs.Position));
+            hash.TransformFinalBlock(buffer, 0, offset);
             mWorker.ReportProgress((int)fs.Position);
         }
 
