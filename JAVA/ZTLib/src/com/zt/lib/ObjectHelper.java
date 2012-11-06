@@ -25,9 +25,7 @@ public class ObjectHelper {
 		for(int i = 0; i < leftFields.length; i ++) {
 			leftFields[i].setAccessible(true);
 			rightFields[i].setAccessible(true);
-			if (leftFields[i].getName().equals(rightFields[i].getName())) {
-				leftFields[i].set(copyTo, rightFields[i].get(o));
-			}
+			leftFields[i].set(copyTo, rightFields[i].get(o));
 		}
 		return copyTo;
 	}
