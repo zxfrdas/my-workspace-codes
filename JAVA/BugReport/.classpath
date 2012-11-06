@@ -3,9 +3,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry exported="true" kind="lib" path="/libs/BugRptSrc.jar"/>
-	<classpathentry exported="true" kind="lib" path="/libs/gson-2.2.1-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="/libs/gson-2.2.1.jar" sourcepath="/libs/gson-2.2.1-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="/libs/httpmime-4.2-zt.jar"/>
+	<classpathentry exported="true" kind="lib" path="/MyLibs/gson-2.2.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="/MyLibs/gson-2.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="/MyLibs/httpmime-4.2-zt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
