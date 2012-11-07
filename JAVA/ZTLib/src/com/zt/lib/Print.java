@@ -40,7 +40,18 @@ public class Print {
 		if (printable) {
 			StackTraceElement line = new Throwable().getStackTrace()[1];
 			if (line != null) {
-				Log.d(TAG, "File[" + line.getFileName() + "]Line[" + line.getLineNumber()
+				Log.w(TAG, "File[" + line.getFileName() + "]Line[" + line.getLineNumber()
+						+ "]Msg[" + msg + "]");
+			}
+		}
+	}
+	
+	public static void i(String msg)
+	{
+		if (printable) {
+			StackTraceElement line = new Throwable().getStackTrace()[1];
+			if (line != null) {
+				Log.i(TAG, "File[" + line.getFileName() + "]Line[" + line.getLineNumber()
 						+ "]Msg[" + msg + "]");
 			}
 		}
