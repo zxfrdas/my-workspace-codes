@@ -1,12 +1,12 @@
 package com.zt.lib.config;
 
-public enum ConfigType {
+public enum EnumConfigType {
 	XML(".xml"),
 	PROP(".properties");
 	
 	private String value;
 	
-	private ConfigType(String value)
+	private EnumConfigType(String value)
 	{
 		this.value = value;
 	}

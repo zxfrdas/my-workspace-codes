@@ -21,7 +21,7 @@ public class RWerImpl implements ConfigRWer {
 	private String mFileName;
 
 	@Override
-	public void loadFile(String name, ConfigType type, Context context)
+	public void loadFile(String name, EnumConfigType type, Context context)
 			throws IOException
 	{
 		mContextRef = new WeakReference<Context>(context);
@@ -38,7 +38,7 @@ public class RWerImpl implements ConfigRWer {
 			break;
 			
 		case PROP:
-			mFileName = name + ConfigType.PROP.value();
+			mFileName = name + EnumConfigType.PROP.value();
 			mProper = new Properties();
 			mProper.load(new InputStreamReader(mContextRef.get().openFileInput(mFileName)));
 			break;

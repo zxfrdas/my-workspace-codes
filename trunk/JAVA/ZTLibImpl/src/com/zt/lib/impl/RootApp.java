@@ -12,7 +12,6 @@ public class RootApp extends Application {
 	public void onCreate()
 	{
 		super.onCreate();
-		mConfigManager = ConfigManager.getInstance(getApplicationContext());
 	}
 	
 }
