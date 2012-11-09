@@ -8,7 +8,7 @@ import android.content.Context;
 
 public interface ConfigRWer {
 	
-	public void loadFile(String name, ConfigType type, Context context) throws FileNotFoundException, IOException;
+	public void loadFile(String name, EnumConfigType type, Context context) throws FileNotFoundException, IOException;
 	
 	public Object get(String name);
 	

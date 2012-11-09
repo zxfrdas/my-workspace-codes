@@ -16,9 +16,8 @@ import com.zt.lib.ObjectHelper;
 import com.zt.lib.Print;
 import com.zt.lib.StreamHelper;
 import com.zt.lib.config.ConfigRWer;
-import com.zt.lib.config.ConfigType;
+import com.zt.lib.config.EnumConfigType;
 import com.zt.lib.config.RWerImpl;
-import com.zt.lib.impl.test.AllTests.TestObject;
 
 public class ConfigRWerTest extends AndroidTestCase {
 
@@ -39,8 +38,8 @@ public class ConfigRWerTest extends AndroidTestCase {
 		Print.setTAG(AllTests.TAG);
 		mRWer = new RWerImpl();
 		mTestObject = new TestObject();
-		InputStream is = getContext().getAssets().open(FILE_NAME + ConfigType.PROP.value());
-		FileOutputStream fos = getContext().openFileOutput(FILE_NAME + ConfigType.PROP.value(),
+		InputStream is = getContext().getAssets().open(FILE_NAME + EnumConfigType.PROP.value());
+		FileOutputStream fos = getContext().openFileOutput(FILE_NAME + EnumConfigType.PROP.value(),
 				Context.MODE_PRIVATE);
 		StreamHelper.output(is, fos);
 		mSp = getContext().getSharedPreferences(FILE_NAME, Context.MODE_MULTI_PROCESS);
@@ -58,7 +57,7 @@ public class ConfigRWerTest extends AndroidTestCase {
 		expects = ObjectHelper.getFieldValues(mExpectObject);
 		index = 0;
 		try {
-			mRWer.loadFile(FILE_NAME, ConfigType.XML, getContext());
+			mRWer.loadFile(FILE_NAME, EnumConfigType.XML, getContext());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

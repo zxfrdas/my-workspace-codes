@@ -10,18 +10,23 @@ public class ObjectHelper {
 	 * 对象浅层拷贝。用于仅包含基础类型的对象的拷贝。仅赋值同名属性。
 	 * @param o 要拷贝的对象
 	 * @return 拷贝之后的新对象
-	 * @throws InstantiationException 
-	 * @throws IllegalAccessException 
 	 */
-	public static Object copyValue(Object o) throws InstantiationException, IllegalAccessException
+	public static Object copyValue(Object o)
 	{
-		Object copyTo = o.getClass().newInstance();
-		Field[] leftFields = copyTo.getClass().getDeclaredFields();
-		Field[] rightFields = o.getClass().getDeclaredFields();
-		for(int i = 0; i < leftFields.length; i ++) {
-			leftFields[i].setAccessible(true);
-			rightFields[i].setAccessible(true);
-			leftFields[i].set(copyTo, rightFields[i].get(o));
+		Object copyTo = null;
+		try {
+			copyTo = o.getClass().newInstance();
+			Field[] leftFields = copyTo.getClass().getDeclaredFields();
+			Field[] rightFields = o.getClass().getDeclaredFields();
+			for(int i = 0; i < leftFields.length; i ++) {
+				leftFields[i].setAccessible(true);
+				rightFields[i].setAccessible(true);
+				leftFields[i].set(copyTo, rightFields[i].get(o));
+			}
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
 		}
 		return copyTo;
 	}
