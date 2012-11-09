@@ -14,8 +14,6 @@ public class ConfigManagerTest extends AndroidTestCase {
 	{
 		super.setUp();
 		mConfigManager = ConfigManager.getInstance(getContext());
-		Print.enable();
-		Print.setTAG(AllTests.TAG);
 	}
 
 	@Override

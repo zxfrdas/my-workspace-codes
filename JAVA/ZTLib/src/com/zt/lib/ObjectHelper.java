@@ -4,10 +4,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.zt.lib.exceptions.FieldNotFoundException;
-import com.zt.lib.exceptions.MethodNotFoundException;
-
-
 public class ObjectHelper {
 	
 	/**
@@ -38,10 +34,10 @@ public class ObjectHelper {
 	 * @return 函数返回值
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
-	 * @throws MethodNotFoundException 
+	 * @throws NoSuchMethodException 
 	 */
 	public static Object invokeMethod(Object object, String methodName, Object... args)
-			throws IllegalArgumentException, InvocationTargetException, MethodNotFoundException
+			throws IllegalArgumentException, InvocationTargetException, NoSuchMethodException
 	{
 		Method[] methods = object.getClass().getDeclaredMethods();
 		for (Method method : methods) {
@@ -54,7 +50,7 @@ public class ObjectHelper {
 				}
 			}
 		}
-		throw new MethodNotFoundException();
+		throw new NoSuchMethodException();
 	}
 	
 	/**
@@ -80,7 +76,7 @@ public class ObjectHelper {
 	}
 	
 	/**
-	 * 获取对象中所有声明的变量（包括私有变量）名
+	 * 获取对象中所有声明的变量（包括私有变量）名。
 	 * @param o
 	 * @return 包含所有变量名的字符串数组
 	 */
@@ -97,37 +93,68 @@ public class ObjectHelper {
 	}
 	
 	/**
-	 * 设置对象中指定变量的值。
+	 * 获取对象中多有声明变量（包括私有变量）的值或引用。
+	 * @param o
+	 * @return 包含所有值或引用的对象数组
+	 * @throws IllegalArgumentException
+	 */
+	public static Object[] getFieldValues(Object o ) throws IllegalArgumentException
+	{
+		Field[] fields = o.getClass().getDeclaredFields();
+		Object[] values = new Object[fields.length];
+		int index = 0;
+		for (Field field : fields) {
+			field.setAccessible(true);
+			try {
+				values[index] = field.get(o);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			index ++;
+		}
+		return values;
+	}
+	
+	/**
+	 * 设置对象中指定变量的值，变量名不能忽略大小写。
 	 * @param o 需设置的对象
 	 * @param fieldName 变量名
 	 * @param value 设置的值
-	 * @throws FieldNotFoundException 未找到指定名称的变量
+	 * @throws NoSuchFieldException 未找到指定名称的变量
 	 * @throws IllegalArgumentException 试图设置的值不正确
 	 */
-	public static void setFieldValue(Object o, String fieldName, Object value) throws FieldNotFoundException,
-			IllegalArgumentException 
+	public static void setFieldValue(Object o, String fieldName, Object value) throws IllegalArgumentException,
+			NoSuchFieldException
 	{
-		boolean bIsFound = false;
-		Field[] fields = o.getClass().getDeclaredFields();
-		int index = -1;
-		for (Field field : fields) {
-			index ++;
-			if (field.getName().toLowerCase().equals(fieldName.toLowerCase())) {
-				bIsFound = true;
-				break;
-			} else {
-				bIsFound = false;
-			}
-		}
-		if (!bIsFound) {
-			throw new FieldNotFoundException();
-		}
-		fields[index].setAccessible(true);
+		Field field = o.getClass().getDeclaredField(fieldName);
+		field.setAccessible(true);
 		try {
-			fields[index].set(o, value);
+			field.set(o, value);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * 获取对象中指定变量的值，变量名不能忽略大小写
+	 * @param o 视图读取变量的对象
+	 * @param fieldName 变量名
+	 * @return 变量的值
+	 * @throws NoSuchFieldException 无此变量
+	 */
+	public static Object getFieldValue(Object o, String fieldName) throws NoSuchFieldException
+	{
+		Object object = null;
+		Field field = o.getClass().getDeclaredField(fieldName);
+		field.setAccessible(true);
+		try {
+			object = field.get(o);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return object;
 	}
 	
 }

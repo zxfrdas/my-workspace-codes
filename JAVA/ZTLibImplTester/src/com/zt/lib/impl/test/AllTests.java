@@ -13,4 +13,10 @@ public class AllTests extends TestSuite {
 		return new TestSuiteBuilder(AllTests.class).includeAllPackagesUnderHere().build();
 	}
 	
+	public static class TestObject {
+		public int publicInt = 0;
+		public boolean publicBoolean = true;
+		public String publicString = "publicString";
+	}
+	
 }

@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.zt.lib.Print;
 import com.zt.lib.StreamHelper;
 
 import android.content.Context;
@@ -16,8 +15,6 @@ public class StreamHelperTest extends AndroidTestCase {
 	protected void setUp() throws Exception
 	{
 		super.setUp();
-		Print.setTAG("ZTLibTest");
-		Print.enable();
 		FileOutputStream fos = getContext().openFileOutput("StreamHelper", Context.MODE_PRIVATE);
 		fos.write(new StringBuilder("StreamHelper").toString().getBytes());
 		fos.flush();
