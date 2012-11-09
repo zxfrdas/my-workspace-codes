@@ -118,11 +118,27 @@ public class RWerImpl implements ConfigRWer {
 	public ConfigRWer set(String name, Object value)
 	{
 		if (null != mSharedPref) {
-			mSpEditor.putString(name, value.toString());
+			setByType(name, value);
 		} else if (null != mProper) {
-			mProper.setProperty(name, value.toString());
+			mProper.put(name, value.toString());
 		}
 		return this;
+	}
+	
+	private void setByType(String name, Object value)
+	{
+		Class<?> c = value.getClass();
+		if (int.class.equals(c) || Integer.class.equals(c)) {
+			mSpEditor.putInt(name, Integer.valueOf(value.toString()));
+		} else if (float.class.equals(c) || Float.class.equals(c)) {
+			mSpEditor.putFloat(name, Float.valueOf(value.toString()));
+		} else if (long.class.equals(c) || Long.class.equals(c)) {
+			mSpEditor.putLong(name, Long.valueOf(value.toString()));
+		} else if (boolean.class.equals(c) || Boolean.class.equals(c)) {
+			mSpEditor.putBoolean(name, Boolean.valueOf(value.toString()));
+		} else if (String.class.equals(c)) {
+			mSpEditor.putString(name, value.toString());
+		}
 	}
 
 	@Override
@@ -163,10 +179,12 @@ public class RWerImpl implements ConfigRWer {
 	{
 		if (null != mSharedPref) {
 			for (Map.Entry<String, ?> entry : value.entrySet()) {
-				mSpEditor.putString(entry.getKey(), entry.getValue().toString());
+				setByType(entry.getKey(), entry.getValue());
 			}
 		} else if (null != mProper) {
-			mProper.putAll(value);
+			for (Map.Entry<String, ?> entry : value.entrySet()) {
+				mProper.put(entry.getKey(), entry.getValue().toString());
+			}
 		}
 		return this;
 	}

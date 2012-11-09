@@ -129,10 +129,15 @@ public class ObjectHelper {
 		Field field = o.getClass().getDeclaredField(fieldName);
 		field.setAccessible(true);
 		try {
-			field.set(o, value);
+			field.set(o, formatFieldValue(field, value));
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private static Object formatFieldValue(Field field, Object value)
+	{
+		return formatObjectType(field.getType(), value);
 	}
 	
 	/**
@@ -149,12 +154,39 @@ public class ObjectHelper {
 		field.setAccessible(true);
 		try {
 			object = field.get(o);
+			field.getType();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		return object;
+	}
+	
+	/**
+	 * 尝试输入的对象转型为指定对象。目前支持转为int/Integer,float/Float,long/Long,boolean/Boolean,String 
+	 * @param type 希望转为的型
+	 * @param value 被转型对象
+	 * @return 转型后的对象
+	 */
+	public static Object formatObjectType(Class<?> type, Object value)
+	{
+		if (int.class.equals(type)
+				|| Integer.class.equals(type)) {
+			value = Integer.valueOf(value.toString());
+		} else if (float.class.equals(type)
+				|| Float.class.equals(type)) {
+			value = Float.valueOf(value.toString());
+		} else if (long.class.equals(type)
+				|| Long.class.equals(type)) {
+			value = Long.valueOf(value.toString());
+		} else if (boolean.class.equals(type)
+				|| Boolean.class.equals(type)) {
+			value = Boolean.valueOf(value.toString());
+		} else if (String.class.equals(type)) {
+			value = value.toString();
+		}
+		return value;
 	}
 	
 }
