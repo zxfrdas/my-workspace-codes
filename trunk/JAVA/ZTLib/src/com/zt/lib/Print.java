@@ -34,6 +34,18 @@ public class Print {
 			}
 		}
 	}
+	
+	public static void d(Object o)
+	{
+		if (printable) {
+			StackTraceElement line = new Throwable().getStackTrace()[1];
+
+			if (line != null) {
+				Log.d(TAG, "File[" + line.getFileName() + "]Line[" + line.getLineNumber()
+						+ "]Msg[" + o.toString() + "]");
+			}
+		}
+	}
 
 	public static void w(String msg)
 	{

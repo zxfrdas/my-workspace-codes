@@ -1,6 +1,5 @@
 package com.zt.lib.config;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -22,7 +21,8 @@ public class RWerImpl implements ConfigRWer {
 	private String mFileName;
 
 	@Override
-	public void loadFile(String name, ConfigType type, Context context) throws FileNotFoundException, IOException
+	public void loadFile(String name, ConfigType type, Context context)
+			throws IOException
 	{
 		mContextRef = new WeakReference<Context>(context);
 		mSharedPref = null;
@@ -33,17 +33,14 @@ public class RWerImpl implements ConfigRWer {
 		case XML:
 			mFileName = name;
 			mSharedPref = mContextRef.get().getSharedPreferences(mFileName, Context.MODE_MULTI_PROCESS
-					| Context.MODE_PRIVATE);
+					| Context.MODE_WORLD_READABLE | Context.MODE_WORLD_WRITEABLE);
 			mSpEditor = mSharedPref.edit();
 			break;
 			
 		case PROP:
 			mFileName = name + ConfigType.PROP.value();
 			mProper = new Properties();
-			mContextRef.get().openFileOutput(mFileName, Context.MODE_PRIVATE).close();
-			InputStreamReader isr = new InputStreamReader(mContextRef.get().openFileInput(mFileName));
-			mProper.load(isr);
-			isr.close();
+			mProper.load(new InputStreamReader(mContextRef.get().openFileInput(mFileName)));
 			break;
 
 		default:
