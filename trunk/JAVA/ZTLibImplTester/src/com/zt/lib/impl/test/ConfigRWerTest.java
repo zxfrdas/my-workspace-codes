@@ -4,8 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.test.AndroidTestCase;
 
 import com.zt.lib.ObjectHelper;
@@ -21,10 +25,13 @@ public class ConfigRWerTest extends AndroidTestCase {
 	private static final String FILE_NAME = "testLoadFile";
 	ConfigRWer mRWer;
 	TestObject mTestObject;
+	TestObject mExpectObject;
+	SharedPreferences mSp;
 	String[] names;
 	Object[] values;
+	Object[] expects;
 	int index;
-	
+
 	@Override
 	protected void setUp() throws Exception
 	{
@@ -36,11 +43,22 @@ public class ConfigRWerTest extends AndroidTestCase {
 		FileOutputStream fos = getContext().openFileOutput(FILE_NAME + ConfigType.PROP.value(),
 				Context.MODE_PRIVATE);
 		StreamHelper.output(is, fos);
+		mSp = getContext().getSharedPreferences(FILE_NAME, Context.MODE_MULTI_PROCESS);
+		Editor editor = mSp.edit();
+		editor.putInt("publicInt", 1);
+		editor.putBoolean("publicBoolean", false);
+		editor.putString("publicString", "privateString");
+		editor.commit();
 		names = ObjectHelper.getFieldNames(mTestObject);
 		values = ObjectHelper.getFieldValues(mTestObject);
+		mExpectObject = new TestObject();
+		mExpectObject.publicInt = 1;
+		mExpectObject.publicBoolean = false;
+		mExpectObject.publicString = "privateString";
+		expects = ObjectHelper.getFieldValues(mExpectObject);
 		index = 0;
 		try {
-			mRWer.loadFile(FILE_NAME, ConfigType.PROP, getContext());
+			mRWer.loadFile(FILE_NAME, ConfigType.XML, getContext());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -53,65 +71,87 @@ public class ConfigRWerTest extends AndroidTestCase {
 	{
 		super.tearDown();
 	}
-	
-	public void testGet()
+
+	public void testGet() throws IllegalArgumentException, NoSuchFieldException
 	{
-		assertEquals(1, mRWer.get("publicInt"));
-		assertEquals(false, mRWer.get("publicBoolean"));
-		assertEquals("privateString", mRWer.get("publicString"));
+		for (index = 0; index < names.length; index ++) {
+			ObjectHelper.setFieldValue(mTestObject, names[index], mRWer.get(names[index]));
+			assertEquals(expects[index], ObjectHelper.getFieldValue(mTestObject, names[index]));
+		}
 	}
-	
+
 	public void testGetInt()
 	{
 		assertEquals(1, mRWer.getInt("publicInt"));
 	}
-	
+
 	public void testGetBoolean()
 	{
 		assertEquals(false, mRWer.getBoolean("publicBoolean"));
 	}
-	
+
 	public void testGetString()
 	{
 		assertEquals("privateString", mRWer.getString("publicString"));
 	}
-	
-	public void testGetAll()
+
+	public void testGetAll() throws IllegalArgumentException, NoSuchFieldException
 	{
-		fail("not test");
+		Map<String, ?> map = mRWer.getAll();
+		for (Map.Entry<String, ?> entry : map.entrySet()) {
+			String name = entry.getKey();
+			Object value = entry.getValue();
+			ObjectHelper.setFieldValue(mTestObject, name, value);
+		}
+		assertEquals(1, ObjectHelper.getFieldValue(mTestObject, "publicInt"));
+		assertEquals(false, ObjectHelper.getFieldValue(mTestObject, "publicBoolean"));
+		assertEquals("privateString", ObjectHelper.getFieldValue(mTestObject, "publicString"));
 	}
-	
-	public void testSet() throws NoSuchFieldException
+
+	public void testSet() throws NoSuchFieldException, IOException
 	{
-		mRWer.set("publicInt", ObjectHelper.getFieldValue(mTestObject, "publicInt"));
-		mRWer.set("publicBoolean", ObjectHelper.getFieldValue(mTestObject, "publicBoolean"));
-		mRWer.set("publicString", ObjectHelper.getFieldValue(mTestObject, "publicString"));
-		assertEquals(0, mRWer.get("publicInt"));
-		assertEquals(true, mRWer.get("publicBoolean"));
-		assertEquals("publicString", mRWer.get("publicString"));
+		for (index = 0; index < names.length; index ++) {
+			mRWer.set(names[index], ObjectHelper.getFieldValue(mTestObject, names[index])).commit();
+			ObjectHelper.setFieldValue(mTestObject, names[index], mRWer.get(names[index]));
+			assertEquals(values[index], ObjectHelper.getFieldValue(mTestObject, names[index]));
+		}
 	}
-	
-	public void testSetInt() throws NoSuchFieldException
+
+	public void testSetInt() throws NoSuchFieldException, IOException
 	{
-		mRWer.setInt("publicInt", (Integer) ObjectHelper.getFieldValue(mTestObject, "publicInt"));
-		assertEquals(ObjectHelper.getFieldValue(mTestObject, "publicInt"), mRWer.getInt("publicInt"));
+		mRWer.setInt("publicInt", (Integer) ObjectHelper.getFieldValue(mTestObject, "publicInt"))
+				.commit();
+		assertEquals(ObjectHelper.getFieldValue(mTestObject, "publicInt"),
+				mRWer.getInt("publicInt"));
 	}
-	
-	public void testSetBoolean() throws NoSuchFieldException
+
+	public void testSetBoolean() throws NoSuchFieldException, IOException
 	{
-		mRWer.setBoolean("publicBoolean", (Boolean) ObjectHelper.getFieldValue(mTestObject, "publicBoolean"));
-		assertEquals(ObjectHelper.getFieldValue(mTestObject, "publicBoolean"), mRWer.getBoolean("publicBoolean"));
+		mRWer.setBoolean("publicBoolean",
+				(Boolean) ObjectHelper.getFieldValue(mTestObject, "publicBoolean")).commit();
+		assertEquals(ObjectHelper.getFieldValue(mTestObject, "publicBoolean"),
+				mRWer.getBoolean("publicBoolean"));
 	}
-	
-	public void testSetString() throws NoSuchFieldException
+
+	public void testSetString() throws NoSuchFieldException, IOException
 	{
-		mRWer.setString("publicString", (String) ObjectHelper.getFieldValue(mTestObject, "publicString"));
-		assertEquals(ObjectHelper.getFieldValue(mTestObject, "publicString"), mRWer.getString("publicString"));
+		mRWer.setString("publicString",
+				(String) ObjectHelper.getFieldValue(mTestObject, "publicString")).commit();
+		assertEquals(ObjectHelper.getFieldValue(mTestObject, "publicString"),
+				mRWer.getString("publicString"));
 	}
-	
-	public void testSetAll()
+
+	public void testSetAll() throws NoSuchFieldException, IOException
 	{
-		fail("not test");
+		Map<String, Object> map = new HashMap<String, Object>();
+		for (index = 0; index < names.length; index ++) {
+			map.put(names[index], ObjectHelper.getFieldValue(mTestObject, names[index]));
+		}
+		mRWer.setAll(map).commit();
+		for (index = 0; index < names.length; index ++) {
+			ObjectHelper.setFieldValue(mTestObject, names[index], mRWer.get(names[index]));
+			assertEquals(values[index], ObjectHelper.getFieldValue(mTestObject, names[index]));
+		}
 	}
 
 }
