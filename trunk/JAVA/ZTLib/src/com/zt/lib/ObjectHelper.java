@@ -235,11 +235,12 @@ public class ObjectHelper {
 		return values;
 	}
 	
-	private static String getFieldAnnotationValue(Field field)
+	public static String getFieldAnnotationValue(Field field)
 	{
 		String name = "";
-		Annotation annotations[] = field.getAnnotations();
+		Annotation[] annotations = field.getDeclaredAnnotations();
 		for (Annotation annotation : annotations) {
+			Print.d(annotation);
 			if (annotation instanceof TargetName) {
 				name = ((TargetName)annotation).value();
 			} else {
