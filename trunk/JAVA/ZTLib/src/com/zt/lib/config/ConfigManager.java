@@ -13,6 +13,7 @@ import android.content.Context;
 
 import com.zt.lib.ObjectHelper;
 import com.zt.lib.StreamHelper;
+import com.zt.lib.collect.SingletonValueMap;
 
 /**
  * 配置文件管理类。需要在assets目录存放默认的配置文件(filename.properties)，程序安装后第一次运行会将默认配置文件
@@ -29,6 +30,7 @@ public class ConfigManager extends Observable {
 	private String fileName;
 	private EnumConfigType eType;
 	private BaseConfigData mConfigData;
+	private SingletonValueMap<String, String> mNameMap;
 
 	/**
 	 * 获取ConfigManager的实例。
@@ -53,6 +55,7 @@ public class ConfigManager extends Observable {
 		mRWer = new RWerImpl();
 		mContextRef = new WeakReference<Context>(context);
 		mConfigData = configData;
+		mNameMap = new SingletonValueMap<String, String>();
 	}
 	
 	/**
@@ -61,14 +64,18 @@ public class ConfigManager extends Observable {
 	 * @param name 配置文件名
 	 * @param defaultName assets目录下指定名称的默认配置文件
 	 * @param type 保存配置文件类型
+	 * @throws IllegalArgumentException 
 	 */
 	public void loadFile(String name, String defaultName, EnumConfigType type)
+			throws IllegalArgumentException
 	{
 		eType = type;
 		fileName = name;
 		setFilePath(name);
 		try {
 			creatFileIfNotExist(filePath, defaultName);
+			mRWer.loadFile(fileName, type, mContextRef.get());
+			reGetAllValue();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -103,8 +110,6 @@ public class ConfigManager extends Observable {
 			try {
 				reGetAllValue();
 			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (NoSuchFieldException e) {
 				e.printStackTrace();
 			}
 			if (EnumConfigType.XML == eType) {
@@ -158,10 +163,12 @@ public class ConfigManager extends Observable {
 	private ConfigManager setAllValue() throws IOException
 	{
 		String[] names = ObjectHelper.getFieldNames(mConfigData);
+		updateNameMap(names, ObjectHelper.getFieldAnnotationValues(mConfigData));
 		Object[] values = ObjectHelper.getFieldValues(mConfigData);
 		Map<String, Object> map = new Hashtable<String, Object>();
 		for (int i = 0; i < names.length; i ++) {
-			map.put(names[i], values[i]);
+//			map.put(names[i], values[i]);
+			map.put(mNameMap.get(names[i]), values[i]);
 		}
 		mRWer.setAll(map);
 		return this;
@@ -169,16 +176,29 @@ public class ConfigManager extends Observable {
 	
 	/**
 	 * 重新从文件中读取配置数据赋值给配置参数类，放弃了所有未提交的更改。
-	 * @throws NoSuchFieldException 
 	 * @throws IllegalArgumentException 
 	 */
-	public void reGetAllValue() throws IllegalArgumentException, NoSuchFieldException
+	public void reGetAllValue() throws IllegalArgumentException
 	{
 		Map<String, ?> map = mRWer.getAll();
 		for (Map.Entry<String, ?> entry : map.entrySet()) {
-			ObjectHelper.setFieldValue(mConfigData, entry.getKey(), entry.getValue());
+			try {
+//				ObjectHelper.setFieldValue(mConfigData, entry.getKey(), entry.getValue());
+				ObjectHelper.setFieldValue(mConfigData, mNameMap.getKeyByValue(entry.getKey()), entry.getValue());
+			} catch (NoSuchFieldException e) {
+				continue;
+			}
 		}
 		notifyConfigChanged();
+	}
+	
+	private void updateNameMap(String[] names, String[] annotationNames)
+	{
+		int index = 0;
+		for (String name : names) {
+			mNameMap.put(name, annotationNames[index]);
+			index ++;
+		}
 	}
 	
 	/**
