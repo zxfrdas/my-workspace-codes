@@ -12,6 +12,7 @@ import java.util.Observable;
 import android.content.Context;
 
 import com.zt.lib.ObjectHelper;
+import com.zt.lib.Print;
 import com.zt.lib.StreamHelper;
 import com.zt.lib.collect.SingletonValueMap;
 
@@ -56,6 +57,7 @@ public class ConfigManager extends Observable {
 		mContextRef = new WeakReference<Context>(context);
 		mConfigData = configData;
 		mNameMap = new SingletonValueMap<String, String>();
+		updateNameMap(ObjectHelper.getFieldNames(mConfigData), ObjectHelper.getFieldAnnotationValues(mConfigData));
 	}
 	
 	/**
@@ -163,7 +165,6 @@ public class ConfigManager extends Observable {
 	private ConfigManager setAllValue() throws IOException
 	{
 		String[] names = ObjectHelper.getFieldNames(mConfigData);
-		updateNameMap(names, ObjectHelper.getFieldAnnotationValues(mConfigData));
 		Object[] values = ObjectHelper.getFieldValues(mConfigData);
 		Map<String, Object> map = new Hashtable<String, Object>();
 		for (int i = 0; i < names.length; i ++) {
@@ -196,6 +197,7 @@ public class ConfigManager extends Observable {
 	{
 		int index = 0;
 		for (String name : names) {
+			Print.d("key = " + name + " value = " + annotationNames[index]);
 			mNameMap.put(name, annotationNames[index]);
 			index ++;
 		}
