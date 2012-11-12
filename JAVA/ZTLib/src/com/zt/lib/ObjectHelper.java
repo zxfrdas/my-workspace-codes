@@ -1,8 +1,11 @@
 package com.zt.lib;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import com.zt.lib.annotations.TargetName;
 
 public class ObjectHelper {
 	
@@ -80,6 +83,11 @@ public class ObjectHelper {
 		return builder.toString();
 	}
 	
+	public static Field[] getFields(Object o)
+	{
+		return o.getClass().getDeclaredFields();
+	}
+	
 	/**
 	 * 获取对象中所有声明的变量（包括私有变量）名。
 	 * @param o
@@ -98,12 +106,28 @@ public class ObjectHelper {
 	}
 	
 	/**
-	 * 获取对象中多有声明变量（包括私有变量）的值或引用。
+	 * 获取所有传入Field的名称
+	 * @param fields 要获取名称的变量数组
+	 * @return 包含所有变量名的字符串数组
+	 */
+	public static String[] getFieldNames(Field[] fields)
+	{
+		String[] names = new String[fields.length];
+		int index = 0;
+		for (Field f : fields) {
+			names[index] = f.getName();
+			index ++;
+		}
+		return names;
+	}
+	
+	/**
+	 * 获取对象中所有声明变量（包括私有变量）的值或引用。
 	 * @param o
 	 * @return 包含所有值或引用的对象数组
 	 * @throws IllegalArgumentException
 	 */
-	public static Object[] getFieldValues(Object o ) throws IllegalArgumentException
+	public static Object[] getFieldValues(Object o) throws IllegalArgumentException
 	{
 		Field[] fields = o.getClass().getDeclaredFields();
 		Object[] values = new Object[fields.length];
@@ -146,29 +170,6 @@ public class ObjectHelper {
 	}
 	
 	/**
-	 * 获取对象中指定变量的值，变量名不能忽略大小写
-	 * @param o 视图读取变量的对象
-	 * @param fieldName 变量名
-	 * @return 变量的值
-	 * @throws NoSuchFieldException 无此变量
-	 */
-	public static Object getFieldValue(Object o, String fieldName) throws NoSuchFieldException
-	{
-		Object object = null;
-		Field field = o.getClass().getDeclaredField(fieldName);
-		field.setAccessible(true);
-		try {
-			object = field.get(o);
-			field.getType();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return object;
-	}
-	
-	/**
 	 * 尝试输入的对象转型为指定对象。目前支持转为int/Integer,float/Float,long/Long,boolean/Boolean,String 
 	 * @param type 希望转为的型
 	 * @param value 被转型对象
@@ -192,6 +193,60 @@ public class ObjectHelper {
 			value = value.toString();
 		}
 		return value;
+	}
+
+	/**
+	 * 获取对象中指定变量的值，变量名不能忽略大小写
+	 * @param o 视图读取变量的对象
+	 * @param fieldName 变量名
+	 * @return 变量的值
+	 * @throws NoSuchFieldException 无此变量
+	 */
+	public static Object getFieldValue(Object o, String fieldName) throws NoSuchFieldException
+	{
+		Object object = null;
+		Field field = o.getClass().getDeclaredField(fieldName);
+		field.setAccessible(true);
+		try {
+			object = field.get(o);
+			field.getType();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return object;
+	}
+	
+	/**
+	 * 获取对象中所有变量中@TargetName这一Annotation属性的值。如果无此值，则返回变量本身名称。
+	 * @param o
+	 * @return
+	 */
+	public static String[] getFieldAnnotationValues(Object o)
+	{
+		Field[] fields = o.getClass().getDeclaredFields();
+		String[] values = new String[fields.length];
+		int index = 0;
+		for (Field field : fields) {
+			values[index] = getFieldAnnotationValue(field);
+			index ++;
+		}
+		return values;
+	}
+	
+	private static String getFieldAnnotationValue(Field field)
+	{
+		String name = "";
+		Annotation annotations[] = field.getAnnotations();
+		for (Annotation annotation : annotations) {
+			if (annotation instanceof TargetName) {
+				name = ((TargetName)annotation).value();
+			} else {
+				name = field.getName();
+			}
+		}
+		return name;
 	}
 	
 }

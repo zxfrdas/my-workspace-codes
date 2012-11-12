@@ -65,8 +65,6 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 			mConfigManager.reGetAllValue();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
 		}
 		mTestObject.publicInt = 2;
 		mTestObject.publicBoolean = true;
@@ -111,8 +109,6 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 		try {
 			mConfigManager.reGetAllValue();
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
 		}
 		for (int i = 0; i < names.length; i ++) {
