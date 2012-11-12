@@ -17,7 +17,8 @@ import com.zt.lib.StreamHelper;
 /**
  * 配置文件管理类。需要在assets目录存放默认的配置文件(filename.properties)，程序安装后第一次运行会将默认配置文件
  * 写入应用的私有目录下。后续配置从私有目录读取。
- * @author Administrator
+ * <p>从文件中读取配置到配置参数类、将配置参数类写入文件时，均会通知所有注册的观察者。
+ * @author zhaotong
  */
 public class ConfigManager extends Observable {
 
@@ -27,7 +28,7 @@ public class ConfigManager extends Observable {
 	private String filePath;
 	private String fileName;
 	private EnumConfigType eType;
-	private ConfigData mConfigData;
+	private BaseConfigData mConfigData;
 
 	/**
 	 * 获取ConfigManager的实例。
@@ -35,7 +36,7 @@ public class ConfigManager extends Observable {
 	 * @param configData 需要ConfigManager管理的配置参数类
 	 * @return instance of {@code ConfigManager}
 	 */
-	public static ConfigManager getInstance(Context context, ConfigData configData)
+	public static ConfigManager getInstance(Context context, BaseConfigData configData)
 	{
 		if (null == instance) {
 			synchronized (ConfigManager.class) {
@@ -47,7 +48,7 @@ public class ConfigManager extends Observable {
 		return instance;
 	}
 	
-	private ConfigManager(Context context, ConfigData configData)
+	private ConfigManager(Context context, BaseConfigData configData)
 	{
 		mRWer = new RWerImpl();
 		mContextRef = new WeakReference<Context>(context);
@@ -57,31 +58,40 @@ public class ConfigManager extends Observable {
 	/**
 	 * 载入配置文件，读取配置项。如果文件不存在，会先判断assets目录下是否存在默认配置文件，若存在，则创建文件并写入默认配置
 	 * 若不存在，则创建空文件。
-	 * @param name
-	 * @param type
+	 * @param name 配置文件名
+	 * @param defaultName assets目录下指定名称的默认配置文件
+	 * @param type 保存配置文件类型
 	 */
-	public void loadFile(String name, EnumConfigType type)
+	public void loadFile(String name, String defaultName, EnumConfigType type)
 	{
 		eType = type;
 		fileName = name;
 		setFilePath(name);
 		try {
-			creatFileIfNotExist(filePath);
-			mRWer.loadFile(name, eType, mContextRef.get());
+			creatFileIfNotExist(filePath, defaultName);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * 内存中数值和文件中数值都回复默认设置
-	 * @throws IOException
+	 * 获取配置参数类的唯一实例，供UI根据用户选择修改配置数据。
+	 * @return
 	 */
-	public void resetDefaultValue() throws IOException
+	public BaseConfigData getConfigData()
+	{
+		return mConfigData;
+	}
+	
+	/**
+	 * 从assets目录下读取指定名称的默认配置文件，恢复内存中数值和文件中数值。
+	 * @param name 默认配置文件名
+	 */
+	public void resetDefaultValue(String name) throws IOException
 	{
 		InputStream is = null;
 		try {
-			is = mContextRef.get().getAssets().open(fileName + EnumConfigType.PROP.value());
+			is = mContextRef.get().getAssets().open(name + EnumConfigType.PROP.value());
 		} catch (FileNotFoundException e) {
 			is = null;
 		}
@@ -91,7 +101,7 @@ public class ConfigManager extends Observable {
 					| Context.MODE_WORLD_WRITEABLE));
 			mRWer.loadFile(fileName, EnumConfigType.PROP, mContextRef.get());
 			try {
-				getAllValue();
+				reGetAllValue();
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (NoSuchFieldException e) {
@@ -99,12 +109,16 @@ public class ConfigManager extends Observable {
 			}
 			if (EnumConfigType.XML == eType) {
 				mRWer.loadFile(fileName, EnumConfigType.XML, mContextRef.get());
-				setAllValue().commit();
+				commit();
 				new File(mContextRef.get().getFilesDir() + "/" + fileName + EnumConfigType.PROP.value()).delete();
 			}
 		}
 	}
 	
+	/**
+	 * 获取当前配置文件所在的绝对路径
+	 * @return filePath
+	 */
 	public String getCurFilePath()
 	{
 		return filePath;
@@ -127,20 +141,21 @@ public class ConfigManager extends Observable {
 	/**
 	 * 判断文件是否存在。若不存在，则从assets目录读取默认配置然后创建文件，写入默认配置。
 	 * @param filePath 文件路径
+	 * @param defaultName assets目录下指定名称的默认配置文件
 	 * @throws IOException
 	 */
-	private void creatFileIfNotExist(String filePath) throws IOException
+	private void creatFileIfNotExist(String filePath, String defaultName) throws IOException
 	{
 		if (!new File(filePath).exists()) {
-			resetDefaultValue();
+			resetDefaultValue(defaultName);
 		}
 	}
 	
 	/**
-	 * 将配置参数类里的配置数据写入内存
+	 * 更新内存中配置参数类中的值。
 	 * @throws IOException 
 	 */
-	public ConfigManager setAllValue() throws IOException
+	private ConfigManager setAllValue() throws IOException
 	{
 		String[] names = ObjectHelper.getFieldNames(mConfigData);
 		Object[] values = ObjectHelper.getFieldValues(mConfigData);
@@ -153,11 +168,11 @@ public class ConfigManager extends Observable {
 	}
 	
 	/**
-	 * 从文件中读取配置数据赋值给配置参数类
+	 * 重新从文件中读取配置数据赋值给配置参数类，放弃了所有未提交的更改。
 	 * @throws NoSuchFieldException 
 	 * @throws IllegalArgumentException 
 	 */
-	public void getAllValue() throws IllegalArgumentException, NoSuchFieldException
+	public void reGetAllValue() throws IllegalArgumentException, NoSuchFieldException
 	{
 		Map<String, ?> map = mRWer.getAll();
 		for (Map.Entry<String, ?> entry : map.entrySet()) {
@@ -167,11 +182,12 @@ public class ConfigManager extends Observable {
 	}
 	
 	/**
-	 * 将配置参数类的数据从内存写入文件
+	 * 提交更改，将所有数据写入文件
 	 * @throws IOException
 	 */
 	public void commit() throws IOException
 	{
+		setAllValue();
 		mRWer.commit();
 		notifyConfigChanged();
 	}
@@ -179,7 +195,7 @@ public class ConfigManager extends Observable {
 	private void notifyConfigChanged()
 	{
 		super.setChanged();
-		super.notifyObservers(mConfigData);
+		super.notifyObservers();
 	}
 
 }
