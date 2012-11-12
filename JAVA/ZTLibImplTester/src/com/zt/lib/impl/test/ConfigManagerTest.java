@@ -41,7 +41,7 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 		expects = ObjectHelper.getFieldValues(mExpectObject);
 		mConfigManager = ConfigManager.getInstance(getContext(), mTestObject);
 		mConfigManager.addObserver(this);
-		mConfigManager.loadFile(FILE_NAME, EnumConfigType.PROP);
+		mConfigManager.loadFile(FILE_NAME, FILE_NAME, EnumConfigType.PROP);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 	public void testResetDefaultValue()
 	{
 		try {
-			mConfigManager.getAllValue();
+			mConfigManager.reGetAllValue();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (NoSuchFieldException e) {
@@ -72,12 +72,12 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 		mTestObject.publicBoolean = true;
 		mTestObject.publicString = "asdasd";
 		try {
-			mConfigManager.setAllValue().commit();
+			mConfigManager.commit();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {
-			mConfigManager.resetDefaultValue();
+			mConfigManager.resetDefaultValue(FILE_NAME);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -90,10 +90,10 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 		}
 	}
 	
-	public void testSetAllValue()
+	public void testCommit()
 	{
 		try {
-			mConfigManager.setAllValue();
+			mConfigManager.commit();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -106,10 +106,10 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 		}
 	}
 	
-	public void testGetAllValue()
+	public void testReGetAllValue()
 	{
 		try {
-			mConfigManager.getAllValue();
+			mConfigManager.reGetAllValue();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (NoSuchFieldException e) {

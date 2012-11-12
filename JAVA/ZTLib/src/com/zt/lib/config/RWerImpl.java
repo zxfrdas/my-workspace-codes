@@ -67,7 +67,9 @@ public class RWerImpl implements ConfigRWer {
 		if (null != mSharedPref) {
 			i = mSharedPref.getInt(name, 0);
 		} else if (null != mProper) {
-			i = Integer.valueOf(mProper.getProperty(name));
+			if (null != mProper.getProperty(name)) {
+				i = Integer.valueOf(mProper.getProperty(name));
+			}
 		}
 		return i;
 	}
@@ -79,7 +81,9 @@ public class RWerImpl implements ConfigRWer {
 		if (null != mSharedPref) {
 			b = mSharedPref.getBoolean(name, false);
 		} else if (null != mProper) {
-			b = Boolean.valueOf(mProper.getProperty(name));
+			if (null != mProper.getProperty(name)) {
+				b = Boolean.valueOf(mProper.getProperty(name));
+			}
 		}
 		return b;
 	}
@@ -91,7 +95,9 @@ public class RWerImpl implements ConfigRWer {
 		if (null != mSharedPref) {
 			s = mSharedPref.getString(name, "");
 		} else if (null != mProper) {
-			s = mProper.getProperty(name);
+			if (null != mProper.getProperty(name)) {
+				s = mProper.getProperty(name);
+			}
 		}
 		return s;
 	}
