@@ -97,7 +97,7 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 		}
 		for (int i = 0; i < names.length; i ++) {
 			try {
-				assertEquals(values[i], ObjectHelper.getFieldValue(mTestObject, names[i]));
+				assertEquals(expects[i], ObjectHelper.getFieldValue(mTestObject, names[i]));
 			} catch (NoSuchFieldException e) {
 				e.printStackTrace();
 			}
@@ -124,7 +124,7 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 	@Override
 	public void update(Observable observable, Object data)
 	{
-		mTestObject = (TestObject) data;
+		mTestObject = (TestObject) mConfigManager.getConfigData();
 	}
 
 }

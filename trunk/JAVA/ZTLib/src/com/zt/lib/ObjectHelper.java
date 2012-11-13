@@ -240,7 +240,6 @@ public class ObjectHelper {
 		String name = "";
 		Annotation[] annotations = field.getDeclaredAnnotations();
 		for (Annotation annotation : annotations) {
-			Print.d(annotation);
 			if (annotation instanceof TargetName) {
 				name = ((TargetName)annotation).value();
 			} else {
