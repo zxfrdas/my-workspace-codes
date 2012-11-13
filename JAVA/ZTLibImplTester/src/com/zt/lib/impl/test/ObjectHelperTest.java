@@ -1,12 +1,10 @@
 package com.zt.lib.impl.test;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
 import android.test.AndroidTestCase;
 
 import com.zt.lib.ObjectHelper;
-import com.zt.lib.Print;
 
 public class ObjectHelperTest extends AndroidTestCase {
 
@@ -31,7 +29,6 @@ public class ObjectHelperTest extends AndroidTestCase {
 		String[] names = ObjectHelper.getFieldNames(o);
 		int index = 0;
 		for (String string : names) {
-			Print.d(fields[index].getName());
 			try {
 				ObjectHelper.getFieldAnnotationValue(fields[index]);
 			} catch (IllegalArgumentException e) {

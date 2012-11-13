@@ -168,7 +168,6 @@ public class ConfigManager extends Observable {
 		Object[] values = ObjectHelper.getFieldValues(mConfigData);
 		Map<String, Object> map = new Hashtable<String, Object>();
 		for (int i = 0; i < names.length; i ++) {
-//			map.put(names[i], values[i]);
 			map.put(mNameMap.get(names[i]), values[i]);
 		}
 		mRWer.setAll(map);
@@ -184,7 +183,6 @@ public class ConfigManager extends Observable {
 		Map<String, ?> map = mRWer.getAll();
 		for (Map.Entry<String, ?> entry : map.entrySet()) {
 			try {
-//				ObjectHelper.setFieldValue(mConfigData, entry.getKey(), entry.getValue());
 				ObjectHelper.setFieldValue(mConfigData, mNameMap.getKeyByValue(entry.getKey()), entry.getValue());
 			} catch (NoSuchFieldException e) {
 				continue;
@@ -217,7 +215,7 @@ public class ConfigManager extends Observable {
 	private void notifyConfigChanged()
 	{
 		super.setChanged();
-		super.notifyObservers();
+		super.notifyObservers(mConfigData);
 	}
 
 }
