@@ -8,6 +8,12 @@ import java.io.OutputStream;
 
 public class StreamHelper {
 	
+	/**
+	 * 将InputStream转换为字符串
+	 * @param stream
+	 * @return 转换后的字符串
+	 * @throws IOException
+	 */
 	public static String toString(InputStream stream) throws IOException
 	{
 		byte[] buffer = new byte[1024];
@@ -21,6 +27,12 @@ public class StreamHelper {
 		return str.toString();
 	}
 	
+	/**
+	 * 将输入流写入输出流中
+	 * @param is 输入流
+	 * @param os 输出流
+	 * @throws IOException
+	 */
 	public static void output(InputStream is, OutputStream os) throws IOException
 	{
 		byte[] buffer = new byte[1024];

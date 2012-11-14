@@ -219,23 +219,11 @@ public class ObjectHelper {
 	}
 	
 	/**
-	 * 获取对象中所有变量中@TargetName这一Annotation属性的值。如果无此值，则返回变量本身名称。
-	 * @param o
-	 * @return
+	 * 获取输入变量@TargetName这一Annotation的值
+	 * @param field 输入变量
+	 * @return 变量的@TargetName值，无则返回变量名
 	 */
-	public static String[] getFieldAnnotationValues(Object o)
-	{
-		Field[] fields = o.getClass().getDeclaredFields();
-		String[] values = new String[fields.length];
-		int index = 0;
-		for (Field field : fields) {
-			values[index] = getFieldAnnotationValue(field);
-			index ++;
-		}
-		return values;
-	}
-	
-	public static String getFieldAnnotationValue(Field field)
+	public static String getFieldTargetNameValue(Field field)
 	{
 		String name = "";
 		Annotation[] annotations = field.getDeclaredAnnotations();
@@ -247,6 +235,33 @@ public class ObjectHelper {
 			}
 		}
 		return name;
+	}
+
+	/**
+	 * 获取对象中所有变量中@TargetName这一Annotation属性的值。如果无此值，则返回变量本身名称。
+	 * @param o
+	 * @return 对象中所有变量的@TargetName值，无则返回变量名
+	 */
+	public static String[] getFieldTargetNameValues(Object o)
+	{
+		Field[] fields = o.getClass().getDeclaredFields();
+		String[] values = new String[fields.length];
+		int index = 0;
+		for (Field field : fields) {
+			values[index] = getFieldTargetNameValue(field);
+			index ++;
+		}
+		return values;
+	}
+	
+	/**
+	 * 获取输入变量的所有Annotation
+	 * @param field 输入变量
+	 * @return 包括该变量所有Annotation的数组，可能为0。
+	 */
+	public static Annotation[] getFieldAnnotations(Field field)
+	{
+		return field.getDeclaredAnnotations();
 	}
 	
 }
