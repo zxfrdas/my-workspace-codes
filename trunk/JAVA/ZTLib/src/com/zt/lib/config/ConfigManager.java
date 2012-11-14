@@ -57,7 +57,7 @@ public class ConfigManager extends Observable {
 		mContextRef = new WeakReference<Context>(context);
 		mConfigData = configData;
 		mNameMap = new SingletonValueMap<String, String>();
-		updateNameMap(ObjectHelper.getFieldNames(mConfigData), ObjectHelper.getFieldAnnotationValues(mConfigData));
+		updateNameMap(ObjectHelper.getFieldNames(mConfigData), ObjectHelper.getFieldTargetNameValues(mConfigData));
 	}
 	
 	/**

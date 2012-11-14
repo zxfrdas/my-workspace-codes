@@ -30,7 +30,7 @@ public class ObjectHelperTest extends AndroidTestCase {
 		int index = 0;
 		for (String string : names) {
 			try {
-				ObjectHelper.getFieldAnnotationValue(fields[index]);
+				ObjectHelper.getFieldTargetNameValue(fields[index]);
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			}
@@ -41,7 +41,7 @@ public class ObjectHelperTest extends AndroidTestCase {
 	
 	public void testGetFieldAnnotationValues()
 	{
-		String[] names = ObjectHelper.getFieldAnnotationValues(new TestObject());
+		String[] names = ObjectHelper.getFieldTargetNameValues(new TestObject());
 		assertEquals("pString", names[0]);
 		assertEquals("pInt", names[1]);
 		assertEquals("pBoolean", names[2]);
