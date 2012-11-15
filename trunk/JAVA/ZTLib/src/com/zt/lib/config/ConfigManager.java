@@ -57,9 +57,22 @@ public class ConfigManager extends Observable {
 		mContextRef = new WeakReference<Context>(context);
 		mConfigData = configData;
 		mNameMap = new SingletonValueMap<String, String>();
-		updateNameMap(ObjectHelper.getFieldNames(mConfigData), ObjectHelper.getFieldTargetNameValues(mConfigData));
+		if (null != mConfigData) {
+			updateNameMap(ObjectHelper.getFieldNames(mConfigData),
+					ObjectHelper.getFieldTargetNameValues(mConfigData));
+		}
 	}
 	
+	private void updateNameMap(String[] names, String[] annotationNames)
+	{
+		int index = 0;
+		for (String name : names) {
+			Print.d("key = " + name + " value = " + annotationNames[index]);
+			mNameMap.put(name, annotationNames[index]);
+			index ++;
+		}
+	}
+
 	/**
 	 * 载入配置文件，读取配置项。如果文件不存在，会先判断assets目录下是否存在默认配置文件，若存在，则创建文件并写入默认配置
 	 * 若不存在，则创建空文件。
@@ -75,14 +88,44 @@ public class ConfigManager extends Observable {
 		fileName = name;
 		setFilePath(name);
 		try {
+			if (null == defaultName || "".equals(defaultName)) {
+				defaultName = fileName;
+			}
 			creatFileIfNotExist(filePath, defaultName);
 			mRWer.loadFile(fileName, type, mContextRef.get());
-			reGetAllValue();
+			reLoadAllValue();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	private void setFilePath(String name)
+	{
+		switch (eType)
+		{
+		case XML:
+			filePath = "/data/data/" + mContextRef.get().getPackageName() + "/shared_prefs/" + name + eType.value();
+			break;
+			
+		case PROP:
+			filePath = mContextRef.get().getFilesDir().getAbsolutePath() + "/" + name + eType.value();
+			break;
+		}
+	}
+
+	/**
+	 * 判断文件是否存在。若不存在，则从assets目录读取默认配置然后创建文件，写入默认配置。
+	 * @param filePath 文件路径
+	 * @param defaultName assets目录下指定名称的默认配置文件
+	 * @throws IOException
+	 */
+	private void creatFileIfNotExist(String filePath, String defaultName) throws IOException
+	{
+		if (!new File(filePath).exists()) {
+			reLoadDefaultValue(defaultName);
+		}
+	}
+
 	/**
 	 * 获取配置参数类的唯一实例，供UI根据用户选择修改配置数据。
 	 * @return
@@ -96,7 +139,7 @@ public class ConfigManager extends Observable {
 	 * 从assets目录下读取指定名称的默认配置文件，恢复内存中数值和文件中数值。
 	 * @param name 默认配置文件名
 	 */
-	public void resetDefaultValue(String name) throws IOException
+	public void reLoadDefaultValue(String name) throws IOException
 	{
 		InputStream is = null;
 		try {
@@ -110,7 +153,7 @@ public class ConfigManager extends Observable {
 					| Context.MODE_WORLD_WRITEABLE));
 			mRWer.loadFile(fileName, EnumConfigType.PROP, mContextRef.get());
 			try {
-				reGetAllValue();
+				reLoadAllValue();
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			}
@@ -131,59 +174,20 @@ public class ConfigManager extends Observable {
 		return filePath;
 	}
 	
-	private void setFilePath(String name)
-	{
-		switch (eType)
-		{
-		case XML:
-			filePath = "/data/data/" + mContextRef.get().getPackageName() + "/shared_prefs/" + name + eType.value();
-			break;
-			
-		case PROP:
-			filePath = mContextRef.get().getFilesDir().getAbsolutePath() + "/" + name + eType.value();
-			break;
-		}
-	}
-	
-	/**
-	 * 判断文件是否存在。若不存在，则从assets目录读取默认配置然后创建文件，写入默认配置。
-	 * @param filePath 文件路径
-	 * @param defaultName assets目录下指定名称的默认配置文件
-	 * @throws IOException
-	 */
-	private void creatFileIfNotExist(String filePath, String defaultName) throws IOException
-	{
-		if (!new File(filePath).exists()) {
-			resetDefaultValue(defaultName);
-		}
-	}
-	
-	/**
-	 * 更新内存中配置参数类中的值。
-	 * @throws IOException 
-	 */
-	private ConfigManager setAllValue() throws IOException
-	{
-		String[] names = ObjectHelper.getFieldNames(mConfigData);
-		Object[] values = ObjectHelper.getFieldValues(mConfigData);
-		Map<String, Object> map = new Hashtable<String, Object>();
-		for (int i = 0; i < names.length; i ++) {
-			map.put(mNameMap.get(names[i]), values[i]);
-		}
-		mRWer.setAll(map);
-		return this;
-	}
-	
 	/**
 	 * 重新从文件中读取配置数据赋值给配置参数类，放弃了所有未提交的更改。
 	 * @throws IllegalArgumentException 
 	 */
-	public void reGetAllValue() throws IllegalArgumentException
+	public void reLoadAllValue() throws IllegalArgumentException
 	{
+		if (null == mConfigData) {
+			return;
+		}
 		Map<String, ?> map = mRWer.getAll();
 		for (Map.Entry<String, ?> entry : map.entrySet()) {
 			try {
-				ObjectHelper.setFieldValue(mConfigData, mNameMap.getKeyByValue(entry.getKey()), entry.getValue());
+				ObjectHelper.setFieldValue(mConfigData, mNameMap.getKeyByValue(entry.getKey()),
+						entry.getValue());
 			} catch (NoSuchFieldException e) {
 				continue;
 			}
@@ -191,14 +195,36 @@ public class ConfigManager extends Observable {
 		notifyConfigChanged();
 	}
 	
-	private void updateNameMap(String[] names, String[] annotationNames)
+	/**
+	 * 获取包括所有值的数组
+	 * @return 长度可能为0
+	 */
+	public Object[] getValues()
 	{
+		Map<String, ?> map = mRWer.getAll();
+		Object[] values = new Object[map.size()];
 		int index = 0;
-		for (String name : names) {
-			Print.d("key = " + name + " value = " + annotationNames[index]);
-			mNameMap.put(name, annotationNames[index]);
+		for (Object o : map.values()) {
+			values[index] = o;
 			index ++;
 		}
+		return values;
+	}
+	
+	/**
+	 * 获取包括所有键的字符串数组
+	 * @return 长度可能为0
+	 */
+	public String[] getKeys()
+	{
+		Map<String, ?> map = mRWer.getAll();
+		String[] str = new String[map.size()];
+		int index = 0;
+		for (String s : map.keySet()) {
+			str[index] = s;
+			index ++;
+		}
+		return str;
 	}
 	
 	/**
@@ -212,6 +238,25 @@ public class ConfigManager extends Observable {
 		notifyConfigChanged();
 	}
 	
+	/**
+	 * 更新内存中配置参数类中的值。
+	 * @throws IOException 
+	 */
+	private ConfigManager setAllValue() throws IOException
+	{
+		if (null == mConfigData) {
+			return this;
+		}
+		String[] names = ObjectHelper.getFieldNames(mConfigData);
+		Object[] values = ObjectHelper.getFieldValues(mConfigData);
+		Map<String, Object> map = new Hashtable<String, Object>();
+		for (int i = 0; i < names.length; i ++) {
+			map.put(mNameMap.get(names[i]), values[i]);
+		}
+		mRWer.setAll(map);
+		return this;
+	}
+
 	private void notifyConfigChanged()
 	{
 		super.setChanged();

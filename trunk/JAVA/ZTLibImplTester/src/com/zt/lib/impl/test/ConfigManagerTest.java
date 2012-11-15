@@ -62,7 +62,7 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 	public void testResetDefaultValue()
 	{
 		try {
-			mConfigManager.reGetAllValue();
+			mConfigManager.reLoadAllValue();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
@@ -75,7 +75,7 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 			e.printStackTrace();
 		}
 		try {
-			mConfigManager.resetDefaultValue(FILE_NAME);
+			mConfigManager.reLoadDefaultValue(FILE_NAME);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -107,7 +107,7 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 	public void testReGetAllValue()
 	{
 		try {
-			mConfigManager.reGetAllValue();
+			mConfigManager.reLoadAllValue();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
