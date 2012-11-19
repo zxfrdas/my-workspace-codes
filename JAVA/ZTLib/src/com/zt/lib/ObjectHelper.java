@@ -158,15 +158,10 @@ public class ObjectHelper {
 		Field field = o.getClass().getDeclaredField(fieldName);
 		field.setAccessible(true);
 		try {
-			field.set(o, formatFieldValue(field, value));
+			field.set(o, formatObjectType(field.getType(), value));
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private static Object formatFieldValue(Field field, Object value)
-	{
-		return formatObjectType(field.getType(), value);
 	}
 	
 	/**
@@ -177,6 +172,7 @@ public class ObjectHelper {
 	 */
 	public static Object formatObjectType(Class<?> type, Object value)
 	{
+		
 		if (int.class.equals(type)
 				|| Integer.class.equals(type)) {
 			value = Integer.valueOf(value.toString());
@@ -252,16 +248,6 @@ public class ObjectHelper {
 			index ++;
 		}
 		return values;
-	}
-	
-	/**
-	 * 获取输入变量的所有Annotation
-	 * @param field 输入变量
-	 * @return 包括该变量所有Annotation的数组，可能为0。
-	 */
-	public static Annotation[] getFieldAnnotations(Field field)
-	{
-		return field.getDeclaredAnnotations();
 	}
 	
 }

@@ -92,7 +92,7 @@ public class ConfigManager extends Observable {
 				defaultName = fileName;
 			}
 			creatFileIfNotExist(filePath, defaultName);
-			mRWer.loadFile(fileName, type, mContextRef.get());
+			mRWer.loadFile(fileName, eType, mContextRef.get());
 			reLoadAllValue();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -193,6 +193,16 @@ public class ConfigManager extends Observable {
 			}
 		}
 		notifyConfigChanged();
+	}
+	
+	/**
+	 * 获取指定名称的值
+	 * @param key
+	 * @return value to get
+	 */
+	public Object getValue(String key)
+	{
+		return mRWer.get(key);
 	}
 	
 	/**
