@@ -42,9 +42,10 @@ public class ObjectHelperTest extends AndroidTestCase {
 	public void testGetFieldAnnotationValues()
 	{
 		String[] names = ObjectHelper.getFieldTargetNameValues(new TestObject());
-		assertEquals("pString", names[0]);
-		assertEquals("pInt", names[1]);
-		assertEquals("pBoolean", names[2]);
+		assertEquals("pStringArray", names[0]);
+		assertEquals("pString", names[1]);
+		assertEquals("pInt", names[2]);
+		assertEquals("pBoolean", names[3]);
 	}
 
 }

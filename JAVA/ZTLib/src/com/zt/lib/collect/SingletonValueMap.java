@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * 继承于Hashtable，实现了一个value无法重复的map，增加了一个根据value获取key的方法。
- * 如果输入的value已经存在于键值对中，并且键与已经存在的不同，那么会将此value覆盖掉已经存在的键值对中的值。
+ * 如果输入的value已经存在于键值对中，并且键与已经存在的不同，那么会用此值覆盖掉已经存在的键值对中的值。
  * @author zhaotong
  *
  * @param <K> 键
@@ -21,6 +21,7 @@ public class SingletonValueMap<K, V> extends Hashtable<K, V> {
 		for (Map.Entry<K, V> entry : entrySet()) {
 			if (entry.getValue().equals(value) && !entry.getKey().equals(key)) {
 				key = entry.getKey();
+				break;
 			}
 		}
 		return super.put(key, value);

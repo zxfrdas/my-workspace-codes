@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.ref.WeakReference;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Set;
+
+import com.zt.lib.collect.SetValueProperties;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -16,7 +19,7 @@ public class RWerImpl implements ConfigRWer {
 	
 	private WeakReference<Context> mContextRef;
 	private SharedPreferences mSharedPref;
-	private Properties mProper;
+	private SetValueProperties mProper;
 	private Editor mSpEditor;
 	private String mFileName;
 
@@ -39,7 +42,7 @@ public class RWerImpl implements ConfigRWer {
 			
 		case PROP:
 			mFileName = name + EnumConfigType.PROP.value();
-			mProper = new Properties();
+			mProper = new SetValueProperties();
 			mProper.load(new InputStreamReader(mContextRef.get().openFileInput(mFileName)));
 			break;
 
@@ -48,14 +51,19 @@ public class RWerImpl implements ConfigRWer {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object get(String name)
 	{
 		Object o = null;
 		if (null != mSharedPref) {
-			o = mSharedPref.getAll().get(name);
+			if (mSharedPref.getAll().get(name) instanceof Set<?>) {
+				Set<String> set = (Set<String>) mSharedPref.getAll().get(name);
+				String[] strings = new String[set.size()];
+				o = set.toArray(strings);
+			}
 		} else if (null != mProper) {
-			o = mProper.get(name);
+			o = mProper.getByArray(name);
 		}
 		return o;
 	}
@@ -101,20 +109,48 @@ public class RWerImpl implements ConfigRWer {
 		}
 		return s;
 	}
+	
+	@Override
+	public String[] getStringArray(String name)
+	{
+		String[] sArray = null;
+		if (null != mSharedPref) {
+			Set<String> set = null;
+			set = mSharedPref.getStringSet(name, new HashSet<String>());
+			String[] strings = new String[set.size()];
+			sArray = set.toArray(strings);
+		} else if (null != mProper) {
+			sArray = mProper.getPropertyAll(name);
+		}
+		return sArray;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, ?> getAll()
 	{
-		Map<String, Object> m = null;
+		Map<String, Object> m = new Hashtable<String, Object>();
+		Object o = null;
 		if (null != mSharedPref) {
-			m = (Map<String, Object>) mSharedPref.getAll();
+			for (Map.Entry<String, ?> entry : mSharedPref.getAll().entrySet()) {
+				o = entry.getValue();
+				if (o instanceof Set<?>) {
+					Set<String> set = (Set<String>) entry.getValue();
+					String[] strings = new String[set.size()];
+					o = set.toArray(strings);
+				}
+				m.put(entry.getKey(), o);
+			}
 		} else if (null != mProper) {
-			m = new Hashtable<String, Object>();
-			for (Map.Entry<?, ?> entry : mProper.entrySet()) {
-				String key = (String) entry.getKey();
-				Object o = entry.getValue();
-				m.put(key, o);
+			for (Map.Entry<String, Set<String>> entry : mProper.entrySet()) {
+				String[] array = mProper.setToArray(entry.getValue());
+				o = null;
+				if (1 == array.length) {
+					o = array[0];
+				} else {
+					o = array;
+				}
+				m.put(entry.getKey(), o);
 			}
 		}
 		return m;
@@ -126,7 +162,7 @@ public class RWerImpl implements ConfigRWer {
 		if (null != mSharedPref) {
 			setByType(name, value);
 		} else if (null != mProper) {
-			mProper.put(name, value.toString());
+			mProper.put(name, value);
 		}
 		return this;
 	}
@@ -144,6 +180,12 @@ public class RWerImpl implements ConfigRWer {
 			mSpEditor.putBoolean(name, Boolean.valueOf(value.toString()));
 		} else if (String.class.equals(c)) {
 			mSpEditor.putString(name, value.toString());
+		} else if (String[].class.equals(c)) {
+			Set<String> setValue = new HashSet<String>();
+			for (String s : (String[]) value) {
+				setValue.add(s);
+			}
+			mSpEditor.putStringSet(name, setValue);
 		}
 	}
 
@@ -179,6 +221,21 @@ public class RWerImpl implements ConfigRWer {
 		}
 		return this;
 	}
+	
+	@Override
+	public ConfigRWer setStringArray(String name, String[] value)
+	{
+		if (null != mSharedPref) {
+			Set<String> set = new HashSet<String>();
+			for (String s : value) {
+				set.add(s);
+			}
+			mSpEditor.putStringSet(name, set);
+		} else if (null != mProper) {
+			mProper.put(name, value);
+		}
+		return this;
+	}
 
 	@Override
 	public ConfigRWer setAll(Map<String, ?> value)
@@ -189,7 +246,7 @@ public class RWerImpl implements ConfigRWer {
 			}
 		} else if (null != mProper) {
 			for (Map.Entry<String, ?> entry : value.entrySet()) {
-				mProper.put(entry.getKey(), entry.getValue().toString());
+				mProper.put(entry.getKey(), entry.getValue());
 			}
 		}
 		return this;
