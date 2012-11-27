@@ -172,23 +172,30 @@ public class ObjectHelper {
 	 */
 	public static Object formatObjectType(Class<?> type, Object value)
 	{
-		
+		Object newValue = null;
 		if (int.class.equals(type)
 				|| Integer.class.equals(type)) {
-			value = Integer.valueOf(value.toString());
+			newValue = Integer.valueOf(value.toString());
 		} else if (float.class.equals(type)
 				|| Float.class.equals(type)) {
-			value = Float.valueOf(value.toString());
+			newValue = Float.valueOf(value.toString());
 		} else if (long.class.equals(type)
 				|| Long.class.equals(type)) {
-			value = Long.valueOf(value.toString());
+			newValue = Long.valueOf(value.toString());
 		} else if (boolean.class.equals(type)
 				|| Boolean.class.equals(type)) {
-			value = Boolean.valueOf(value.toString());
+			newValue = Boolean.valueOf(value.toString());
 		} else if (String.class.equals(type)) {
-			value = value.toString();
+			newValue = value.toString();
+		} else if (String[].class.equals(type)) {
+			newValue = new String[((String[]) value).length];
+			int index = 0;
+			for (String s : (String[]) value) {
+				((String[]) newValue)[index] = s;
+				index ++;
+			}
 		}
-		return value;
+		return newValue;
 	}
 
 	/**

@@ -1,4 +1,4 @@
-package com.zt.lib.impl.test;
+package com.zt.lib.impl;
 
 import com.zt.lib.annotations.TargetName;
 import com.zt.lib.config.BaseConfigData;

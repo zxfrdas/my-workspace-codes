@@ -50,6 +50,13 @@ public interface ConfigRWer {
 	public String getString(String name);
 	
 	/**
+	 * 获取指定名称的属性的String数组的值
+	 * @param name
+	 * @return 无此名称则返回默认值null
+	 */
+	public String[] getStringArray(String name);
+	
+	/**
 	 * 获取配置文件中所有键值对
 	 * @return Returns a map containing a list of pairs key/value representing the preferences.
 	 */
@@ -86,6 +93,14 @@ public interface ConfigRWer {
 	 * @return {@link ConfigRWer}
 	 */
 	public ConfigRWer setString(String name, String value);
+	
+	/**
+	 * 设置指定名称的属性为指定String数组的值。如果不存在此名称则创建，如果有同名则覆盖。
+	 * @param name the key to add
+	 * @param value the value to add
+	 * @return {@link ConfigRWer}
+	 */
+	public ConfigRWer setStringArray(String name, String[] value);
 	
 	/**
 	 * 加入指定Map中所有键值对
