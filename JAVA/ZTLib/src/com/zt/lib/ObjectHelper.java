@@ -62,6 +62,35 @@ public class ObjectHelper {
 	}
 	
 	/**
+	 * 调用对象中指定的静态函数，包括私有函数。
+	 * @param object
+	 * @param methodName
+	 * @param args
+	 * @return 函数返回值
+	 * @throws NoSuchMethodException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 */
+	public static Object invokeStaticMethod(Class<?> c , String methodName, Object... args)
+			throws NoSuchMethodException, IllegalArgumentException, InvocationTargetException
+	{
+		Class<?>[] argsClass = new Class<?>[args.length];
+		if (0 != args.length) {
+			for (int i = 0; i < args.length; i ++) {
+				argsClass[i] = args[i].getClass();
+			}
+		}
+		Method method = c.getDeclaredMethod(methodName, argsClass);
+		method.setAccessible(true);
+		try {
+			return method.invoke(null, args);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
 	 * 将对象中变量（包括私有变量）及其值构造为字符串返回。
 	 * @param object 试图打印的对象
 	 * @return 字符串形如"键 = 值"
