@@ -1,4 +1,5 @@
 com.zt.lib
 com.zt.lib.annotations
+com.zt.lib.cache
 com.zt.lib.collect
 com.zt.lib.config
