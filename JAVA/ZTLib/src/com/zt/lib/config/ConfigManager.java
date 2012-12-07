@@ -249,7 +249,7 @@ public class ConfigManager extends Observable {
 	}
 	
 	/**
-	 * 更新内存中配置参数类中的值。
+	 * 将配置参数类中的值写入内存中MAP里对应的键值对。
 	 * @throws IOException 
 	 */
 	private ConfigManager setAllValue() throws IOException

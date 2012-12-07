@@ -28,7 +28,7 @@ public class SetValueMap extends Hashtable<String, Set<String>> {
 	}
 	
 	/**
-	 * 接受类型为String,Set<String>,String[]的value参数。内部将同意转换为Set<String>后put进Map。
+	 * 接受类型为String,Set<String>,String[]的value参数。内部将统一转换为Set<String>后put进Map。
 	 * @param key
 	 * @param value
 	 * @return
