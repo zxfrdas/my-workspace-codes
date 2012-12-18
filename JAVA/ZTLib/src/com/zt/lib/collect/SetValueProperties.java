@@ -25,7 +25,7 @@ public class SetValueProperties extends SetValueMap {
 
 	private static final long serialVersionUID = -2083356585239652649L;
 
-	private static final String NEW_LINE = System.getProperty("line.separator") + "";
+	private static final String NEW_LINE = System.getProperty("line.separator");
 
     /**
      * The default values for keys not found in this {@code Properties}
