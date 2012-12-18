@@ -30,7 +30,7 @@ public class ConfigManager extends Observable {
 	private String filePath;
 	private String fileName;
 	private EnumConfigType eType;
-	private BaseConfigData mConfigData;
+	private IConfigData mConfigData;
 	private SingletonValueMap<String, String> mNameMap;
 
 	/**
@@ -39,7 +39,7 @@ public class ConfigManager extends Observable {
 	 * @param configData 需要ConfigManager管理的配置参数类
 	 * @return instance of {@code ConfigManager}
 	 */
-	public static ConfigManager getInstance(Context context, BaseConfigData configData)
+	public static ConfigManager getInstance(Context context, IConfigData configData)
 	{
 		if (null == instance) {
 			synchronized (ConfigManager.class) {
@@ -51,7 +51,7 @@ public class ConfigManager extends Observable {
 		return instance;
 	}
 	
-	private ConfigManager(Context context, BaseConfigData configData)
+	private ConfigManager(Context context, IConfigData configData)
 	{
 		mRWer = new RWerImpl();
 		mContextRef = new WeakReference<Context>(context);
@@ -130,7 +130,7 @@ public class ConfigManager extends Observable {
 	 * 获取配置参数类的唯一实例，供UI根据用户选择修改配置数据。
 	 * @return
 	 */
-	public BaseConfigData getConfigData()
+	public IConfigData getConfigData()
 	{
 		return mConfigData;
 	}

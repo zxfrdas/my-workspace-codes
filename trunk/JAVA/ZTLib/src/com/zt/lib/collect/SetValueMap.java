@@ -58,4 +58,9 @@ public class SetValueMap extends Hashtable<String, Set<String>> {
 		return set.toArray(values);
 	}
 	
+	public synchronized int getCount(String key)
+	{
+		return getByArray(key).length;
+	}
+	
 }

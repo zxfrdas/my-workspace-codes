@@ -37,26 +37,24 @@ public class ObjectHelper {
 	/**
 	 * 调用对象中指定函数，包括私有函数。
 	 * @param object
-	 * @param methodName
-	 * @param args
+	 * @param methodName 
+	 * @param types
+	 * @param args 
 	 * @return 函数返回值
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 * @throws NoSuchMethodException 
 	 */
-	public static Object invokeMethod(Object object, String methodName, Object... args)
-			throws IllegalArgumentException, InvocationTargetException, NoSuchMethodException
+	public static Object invokeMethod(Object object, String methodName, Class<?>[] types,
+			Object... args) throws IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException
 	{
-		Method[] methods = object.getClass().getDeclaredMethods();
-		for (Method method : methods) {
-			if (method.getName().toLowerCase().equals(methodName.toLowerCase())) {
-				method.setAccessible(true);
-				try {
-					return method.invoke(object, args);
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}
-			}
+		Method method = object.getClass().getDeclaredMethod(methodName, types);
+		method.setAccessible(true);
+		try {
+			return method.invoke(object, args);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
 		}
 		throw new NoSuchMethodException();
 	}
@@ -65,29 +63,25 @@ public class ObjectHelper {
 	 * 调用对象中指定的静态函数，包括私有函数。
 	 * @param object
 	 * @param methodName
+	 * @param types
 	 * @param args
 	 * @return 函数返回值
 	 * @throws NoSuchMethodException
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 */
-	public static Object invokeStaticMethod(Class<?> c , String methodName, Object... args)
-			throws NoSuchMethodException, IllegalArgumentException, InvocationTargetException
+	public static Object invokeStaticMethod(Class<?> c, String methodName, Class<?>[] types,
+			Object... args) throws NoSuchMethodException, IllegalArgumentException,
+			InvocationTargetException
 	{
-		Class<?>[] argsClass = new Class<?>[args.length];
-		if (0 != args.length) {
-			for (int i = 0; i < args.length; i ++) {
-				argsClass[i] = args[i].getClass();
-			}
-		}
-		Method method = c.getDeclaredMethod(methodName, argsClass);
+		Method method = c.getDeclaredMethod(methodName, types);
 		method.setAccessible(true);
 		try {
 			return method.invoke(null, args);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		return null;
+		throw new NoSuchMethodException();
 	}
 	
 	/**

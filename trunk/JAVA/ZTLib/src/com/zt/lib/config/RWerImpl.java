@@ -14,6 +14,7 @@ import com.zt.lib.collect.SetValueProperties;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.YuvImage;
 
 public class RWerImpl implements ConfigRWer {
 	
@@ -35,13 +36,12 @@ public class RWerImpl implements ConfigRWer {
 		{
 		case XML:
 			mFileName = name;
-			mSharedPref = mContextRef.get().getSharedPreferences(mFileName, Context.MODE_MULTI_PROCESS
-					| Context.MODE_WORLD_READABLE | Context.MODE_WORLD_WRITEABLE);
+			mSharedPref = mContextRef.get().getSharedPreferences(mFileName, Context.MODE_MULTI_PROCESS);
 			mSpEditor = mSharedPref.edit();
 			break;
 			
 		case PROP:
-			mFileName = name + EnumConfigType.PROP.value();
+			mFileName = name + type.value();
 			mProper = new SetValueProperties();
 			mProper.load(new InputStreamReader(mContextRef.get().openFileInput(mFileName)));
 			break;
