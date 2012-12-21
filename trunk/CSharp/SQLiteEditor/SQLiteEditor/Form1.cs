@@ -13,7 +13,7 @@ using System.Collections;
 
 namespace SQLiteEditor {
     public partial class MainForm : Form {
-
+        private const int TABLE_LEVEL = 1;
         private SQLiteConnection sqlCon = null;
         private DbDataReader sqlReader = null;
 
@@ -25,7 +25,7 @@ namespace SQLiteEditor {
 
         private void onFormLoad(object sender, EventArgs e)
         {
-            sqlCon = DataBaseHelper.connectDB("./factory.db");
+            sqlCon = DataBaseHelper.connectDB("D:/factory.db");
             sqlCon.Open();
             sqlReader = DataBaseHelper.queryReturnReader(sqlCon, "tbl_name",
                 "sqlite_master", "type='table'");
@@ -46,22 +46,18 @@ namespace SQLiteEditor {
                 sqlReader.Close();
                 sqlReader.Dispose();
             }
+            if (null != sqlCon) {
+                sqlCon.Close();
+                sqlCon.Dispose();
+            }
         }
 
         private void mTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            bool bIsTableNode = false;
-            if (0 != e.Node.Level) {
-                bIsTableNode = true;
+            if (TABLE_LEVEL == e.Node.Level) {
+                mDataView.DataSource = DataBaseHelper.queryReturnTable(sqlCon, "*",
+                    e.Node.Text, null);
             }
-            if (bIsTableNode) {
-                mDataView.DataSource = DataBaseHelper.queryReturnTable(sqlCon, "*", e.Node.Text, null);
-            }
-        }
-
-        private void dataView_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
         }
 
         private void onRowAdded(object sender, DataGridViewRowsAddedEventArgs e)
@@ -86,6 +82,17 @@ namespace SQLiteEditor {
             for (int i = rowIndex + rowCount; i < mDataView.Rows.Count; i++) {
                 mDataView.Rows[i].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
                 mDataView.Rows[i].HeaderCell.Value = (i + 1).ToString();
+            }
+        }
+
+        private void onClick(object sender, EventArgs e)
+        {
+            if (!"".Equals(mDataKey.Text) && !"".Equals(mDataValue.Text)) {
+                Dictionary<String, String> values = new Dictionary<String, String>();
+                values.Add(mDataKey.Text, mDataValue.Text);
+                DataBaseHelper.update(sqlCon, mTreeView.SelectedNode.Text, values, mDataWhere.Text);
+                mDataView.DataSource = DataBaseHelper.queryReturnTable(sqlCon,
+                    "*", mTreeView.SelectedNode.Text, null);
             }
         }
 

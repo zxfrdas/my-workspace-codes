@@ -12,8 +12,13 @@ using System.Data.SqlClient;
 namespace SQLiteEditor {
     class DataBaseHelper {
         private const String SELECT = "SELECT ";
+        private const String UPDATE = "UPDATE ";
         private const String FROM = " FROM ";
         private const String WHERE = " WHERE ";
+        private const String SET = " SET ";
+        private const String AND = " AND ";
+        private const String EQUAL = " = ";
+        private const String COMMA = ",";
 
         public static SQLiteConnection connectDB(String filePath)
         {
@@ -39,21 +44,21 @@ namespace SQLiteEditor {
         public static DbDataReader queryReturnReader(SQLiteConnection con,
             String name, String tableName, String where)
         {
-            return getCommand(con, name, tableName, where).
+            return getQueryCommand(con, name, tableName, where).
                 ExecuteReader(CommandBehavior.CloseConnection);
         }
 
         public static DataTable queryReturnTable(SQLiteConnection con,
             String name, String tableName, String where)
         {
-            SQLiteDataAdapter adapter = new SQLiteDataAdapter(getCommand(con, name,
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(getQueryCommand(con, name,
                 tableName, where));
             DataTable dataTable = new DataTable();
             adapter.Fill(dataTable);
             return dataTable;
         }
 
-        public static SQLiteCommand getCommand(SQLiteConnection con,
+        private static SQLiteCommand getQueryCommand(SQLiteConnection con,
             String name, String tableName, String where)
         {
             if (ConnectionState.Closed == con.State) {
@@ -68,6 +73,40 @@ namespace SQLiteEditor {
                 throw new ArgumentNullException("tableName should not be null");
             }
             sb.Append(FROM + tableName);
+            if (null != where && !"".Equals(where)) {
+                sb.Append(WHERE + where);
+            }
+            SQLiteCommand command = con.CreateCommand();
+            command.CommandText = sb.ToString();
+            return command;
+        }
+
+        public static void update(SQLiteConnection con, String tableName,
+            Dictionary<String, String> values, String where)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var value in values) {
+                sb.Append(value.Key).Append(EQUAL).Append(value.Value).Append(COMMA);
+            }
+            sb.Remove(sb.ToString().LastIndexOf(COMMA), 1);
+            getUpdateCommand(con, sb.ToString(), tableName, where).ExecuteNonQuery();
+        }
+
+        private static SQLiteCommand getUpdateCommand(SQLiteConnection con,
+            String name, String tableName, String where)
+        {
+            if (ConnectionState.Closed == con.State) {
+                throw new Exception("SQLiteConnection not open");
+            }
+            StringBuilder sb = new StringBuilder();
+            if (null == tableName || "".Equals(tableName)) {
+                throw new ArgumentNullException("tableName should not be null");
+            }
+            sb.Append(UPDATE + tableName);
+            if (null == name || "".Equals(name)) {
+                name = "*";
+            }
+            sb.Append(SET + name);
             if (null != where && !"".Equals(where)) {
                 sb.Append(WHERE + where);
             }
