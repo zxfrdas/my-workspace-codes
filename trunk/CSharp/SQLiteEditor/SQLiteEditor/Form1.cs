@@ -157,6 +157,9 @@ namespace SQLiteEditor {
                         mSqlReader.GetOrdinal("tbl_name")));
                     index++;
                 }
+                if (null != mTreeView.TopNode.Nodes && 0 != mTreeView.TopNode.Nodes.Count) {
+                    mTreeView.TopNode.Nodes.Clear();
+                }
                 mTreeView.TopNode.Text = mDBPath.Substring(mDBPath.LastIndexOf(@"\") + 1);
                 mTreeView.TopNode.Nodes.AddRange(tableNameNodes);
             }

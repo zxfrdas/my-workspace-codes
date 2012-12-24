@@ -17,7 +17,7 @@ import java.util.Set;
 
 
 /**
- * 本类将系统自带的Properties类进行修改、精简。实现了一个key为String，value为Set<String>的Properties类。
+ * 本类将系统自带的Properties类进行修改。实现了一个key为String，value为Set<String>的Properties类。
  * 方便进行数组的存取。一个数组value在属性文件中的表现形式为一系列key相同的value。
  * @author zhaotong
  */
