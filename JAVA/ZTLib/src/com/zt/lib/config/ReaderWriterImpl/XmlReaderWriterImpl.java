@@ -1,54 +1,32 @@
-package com.zt.lib.config;
+package com.zt.lib.config.ReaderWriterImpl;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
-import com.zt.lib.collect.SetValueProperties;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.YuvImage;
 
-public class RWerImpl implements ConfigRWer {
-	
+import com.zt.lib.config.ReaderWriter;
+
+public class XmlReaderWriterImpl implements ReaderWriter {
+
 	private WeakReference<Context> mContextRef;
 	private SharedPreferences mSharedPref;
-	private SetValueProperties mProper;
 	private Editor mSpEditor;
 	private String mFileName;
-
+	
 	@Override
-	public void loadFile(String name, EnumConfigType type, Context context)
-			throws IOException
+	public void loadFile(String name, Context context) throws IOException
 	{
 		mContextRef = new WeakReference<Context>(context);
-		mSharedPref = null;
-		mProper = null;
-		mSpEditor = null;
-		switch (type)
-		{
-		case XML:
-			mFileName = name;
-			mSharedPref = mContextRef.get().getSharedPreferences(mFileName, Context.MODE_MULTI_PROCESS);
-			mSpEditor = mSharedPref.edit();
-			break;
-			
-		case PROP:
-			mFileName = name + type.value();
-			mProper = new SetValueProperties();
-			mProper.load(new InputStreamReader(mContextRef.get().openFileInput(mFileName)));
-			break;
-
-		default:
-			break;
-		}
+		mFileName = name;
+		mSharedPref = mContextRef.get().getSharedPreferences(mFileName, Context.MODE_MULTI_PROCESS);
+		mSpEditor = mSharedPref.edit();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -62,8 +40,6 @@ public class RWerImpl implements ConfigRWer {
 				String[] strings = new String[set.size()];
 				o = set.toArray(strings);
 			}
-		} else if (null != mProper) {
-			o = mProper.getByArray(name);
 		}
 		return o;
 	}
@@ -74,10 +50,6 @@ public class RWerImpl implements ConfigRWer {
 		int i = 0;
 		if (null != mSharedPref) {
 			i = mSharedPref.getInt(name, 0);
-		} else if (null != mProper) {
-			if (null != mProper.getProperty(name)) {
-				i = Integer.valueOf(mProper.getProperty(name));
-			}
 		}
 		return i;
 	}
@@ -88,10 +60,6 @@ public class RWerImpl implements ConfigRWer {
 		boolean b = false;
 		if (null != mSharedPref) {
 			b = mSharedPref.getBoolean(name, false);
-		} else if (null != mProper) {
-			if (null != mProper.getProperty(name)) {
-				b = Boolean.valueOf(mProper.getProperty(name));
-			}
 		}
 		return b;
 	}
@@ -102,14 +70,10 @@ public class RWerImpl implements ConfigRWer {
 		String s = "";
 		if (null != mSharedPref) {
 			s = mSharedPref.getString(name, "");
-		} else if (null != mProper) {
-			if (null != mProper.getProperty(name)) {
-				s = mProper.getProperty(name);
-			}
 		}
 		return s;
 	}
-	
+
 	@Override
 	public String[] getStringArray(String name)
 	{
@@ -119,8 +83,6 @@ public class RWerImpl implements ConfigRWer {
 			set = mSharedPref.getStringSet(name, new HashSet<String>());
 			String[] strings = new String[set.size()];
 			sArray = set.toArray(strings);
-		} else if (null != mProper) {
-			sArray = mProper.getPropertyAll(name);
 		}
 		return sArray;
 	}
@@ -141,28 +103,15 @@ public class RWerImpl implements ConfigRWer {
 				}
 				m.put(entry.getKey(), o);
 			}
-		} else if (null != mProper) {
-			for (Map.Entry<String, Set<String>> entry : mProper.entrySet()) {
-				String[] array = mProper.setToArray(entry.getValue());
-				o = null;
-				if (1 == array.length) {
-					o = array[0];
-				} else {
-					o = array;
-				}
-				m.put(entry.getKey(), o);
-			}
 		}
 		return m;
 	}
 
 	@Override
-	public ConfigRWer set(String name, Object value)
+	public ReaderWriter set(String name, Object value)
 	{
 		if (null != mSharedPref) {
 			setByType(name, value);
-		} else if (null != mProper) {
-			mProper.put(name, value);
 		}
 		return this;
 	}
@@ -190,40 +139,34 @@ public class RWerImpl implements ConfigRWer {
 	}
 
 	@Override
-	public ConfigRWer setInt(String name, int value)
+	public ReaderWriter setInt(String name, int value)
 	{
 		if (null != mSharedPref) {
 			mSpEditor.putInt(name, value);
-		} else if (null != mProper) {
-			mProper.setProperty(name, String.valueOf(value));
 		}
 		return this;
 	}
 
 	@Override
-	public ConfigRWer setBoolean(String name, boolean value)
+	public ReaderWriter setBoolean(String name, boolean value)
 	{
 		if (null != mSharedPref) {
 			mSpEditor.putBoolean(name, value);
-		} else if (null != mProper) {
-			mProper.setProperty(name, String.valueOf(value));
 		}
 		return this;
 	}
 
 	@Override
-	public ConfigRWer setString(String name, String value)
+	public ReaderWriter setString(String name, String value)
 	{
 		if (null != mSharedPref) {
 			mSpEditor.putString(name, value);
-		} else if (null != mProper) {
-			mProper.setProperty(name, value);
 		}
 		return this;
 	}
-	
+
 	@Override
-	public ConfigRWer setStringArray(String name, String[] value)
+	public ReaderWriter setStringArray(String name, String[] value)
 	{
 		if (null != mSharedPref) {
 			Set<String> set = new HashSet<String>();
@@ -231,22 +174,16 @@ public class RWerImpl implements ConfigRWer {
 				set.add(s);
 			}
 			mSpEditor.putStringSet(name, set);
-		} else if (null != mProper) {
-			mProper.put(name, value);
 		}
 		return this;
 	}
 
 	@Override
-	public ConfigRWer setAll(Map<String, ?> value)
+	public ReaderWriter setAll(Map<String, ?> value)
 	{
 		if (null != mSharedPref) {
 			for (Map.Entry<String, ?> entry : value.entrySet()) {
 				setByType(entry.getKey(), entry.getValue());
-			}
-		} else if (null != mProper) {
-			for (Map.Entry<String, ?> entry : value.entrySet()) {
-				mProper.put(entry.getKey(), entry.getValue());
 			}
 		}
 		return this;
@@ -257,12 +194,7 @@ public class RWerImpl implements ConfigRWer {
 	{
 		if (null != mSharedPref) {
 			mSpEditor.commit();
-		} else if (null != mProper) {
-			OutputStreamWriter osw = new OutputStreamWriter(mContextRef.get().openFileOutput(
-					mFileName, Context.MODE_PRIVATE));
-			mProper.store(osw, "");
-			osw.close();
 		}
 	}
-	
+
 }

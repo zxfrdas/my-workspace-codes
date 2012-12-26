@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 import android.test.AndroidTestCase;
 
-import com.zt.lib.ObjectHelper;
+import com.zt.lib.ObjectReflector;
 
 public class ObjectHelperTest extends AndroidTestCase {
 
@@ -25,12 +25,12 @@ public class ObjectHelperTest extends AndroidTestCase {
 	
 	public void testGetFieldAnnotationValue()
 	{
-		Field[] fields = ObjectHelper.getFields(o);
-		String[] names = ObjectHelper.getFieldNames(o);
+		Field[] fields = ObjectReflector.getFields(o);
+		String[] names = ObjectReflector.getFieldNames(o);
 		int index = 0;
 		for (String string : names) {
 			try {
-				ObjectHelper.getFieldTargetNameValue(fields[index]);
+				ObjectReflector.getFieldTargetNameValue(fields[index]);
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			}
@@ -41,7 +41,7 @@ public class ObjectHelperTest extends AndroidTestCase {
 	
 	public void testGetFieldAnnotationValues()
 	{
-		String[] names = ObjectHelper.getFieldTargetNameValues(new TestObject());
+		String[] names = ObjectReflector.getFieldTargetNameValues(new TestObject());
 		assertEquals("pStringArray", names[0]);
 		assertEquals("pString", names[1]);
 		assertEquals("pInt", names[2]);

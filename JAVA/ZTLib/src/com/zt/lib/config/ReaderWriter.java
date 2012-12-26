@@ -9,17 +9,15 @@ import android.content.Context;
  * 读写配置文件的方法接口。对配置文件进行读写操作之前请确保成功loadFile，完成操作用请确保使用commit提交更改。
  * @author zhaotong
  */
-public interface ConfigRWer {
+public interface ReaderWriter {
 	
 	/**
 	 * 读取指定名称、指定类型的配置文件。目前支持SharedPreference和properties两种配置文件格式。
 	 * @param name 配置文件名，不包括后缀名
-	 * @param type	配置文件类型。{@link EnumConfigType}
 	 * @param context 上下文
 	 * @throws IOException 读取出错
 	 */
-	public void loadFile(String name, EnumConfigType type, Context context)
-			throws IOException;
+	public void loadFile(String name, Context context) throws IOException;
 	
 	/**
 	 * 获取指定名称的属性值
@@ -66,48 +64,48 @@ public interface ConfigRWer {
 	 * 设置指定名称的属性为指定值。如果不存在此名称则创建，如果有同名则覆盖。
 	 * @param name the key to add
 	 * @param value the value to add
-	 * @return {@link ConfigRWer}
+	 * @return {@link ReaderWriter}
 	 */
-	public ConfigRWer set(String name, Object value);
+	public ReaderWriter set(String name, Object value);
 	
 	/**
 	 * 设置指定名称的属性为指定INT值。如果不存在此名称则创建，如果有同名则覆盖。
 	 * @param name the key to add
 	 * @param value the value to add
-	 * @return {@link ConfigRWer}
+	 * @return {@link ReaderWriter}
 	 */
-	public ConfigRWer setInt(String name, int value);
+	public ReaderWriter setInt(String name, int value);
 	
 	/**
 	 * 设置指定名称的属性为指定boolean值。如果不存在此名称则创建，如果有同名则覆盖。
 	 * @param name the key to add
 	 * @param value the value to add
-	 * @return {@link ConfigRWer}
+	 * @return {@link ReaderWriter}
 	 */
-	public ConfigRWer setBoolean(String name, boolean value);
+	public ReaderWriter setBoolean(String name, boolean value);
 	
 	/**
 	 * 设置指定名称的属性为指定String值。如果不存在此名称则创建，如果有同名则覆盖。
 	 * @param name the key to add
 	 * @param value the value to add
-	 * @return {@link ConfigRWer}
+	 * @return {@link ReaderWriter}
 	 */
-	public ConfigRWer setString(String name, String value);
+	public ReaderWriter setString(String name, String value);
 	
 	/**
 	 * 设置指定名称的属性为指定String数组的值。如果不存在此名称则创建，如果有同名则覆盖。
 	 * @param name the key to add
 	 * @param value the value to add
-	 * @return {@link ConfigRWer}
+	 * @return {@link ReaderWriter}
 	 */
-	public ConfigRWer setStringArray(String name, String[] value);
+	public ReaderWriter setStringArray(String name, String[] value);
 	
 	/**
 	 * 加入指定Map中所有键值对
 	 * @param value the map to add
-	 * @return {@link ConfigRWer}
+	 * @return {@link ReaderWriter}
 	 */
-	public ConfigRWer setAll(Map<String, ?> value);
+	public ReaderWriter setAll(Map<String, ?> value);
 	
 	/**
 	 * 提交更改，保存至文件。

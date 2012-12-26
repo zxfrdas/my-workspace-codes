@@ -11,7 +11,7 @@ import java.util.Observable;
 
 import android.content.Context;
 
-import com.zt.lib.ObjectHelper;
+import com.zt.lib.ObjectReflector;
 import com.zt.lib.Print;
 import com.zt.lib.StreamHelper;
 import com.zt.lib.collect.SingletonValueMap;
@@ -26,7 +26,7 @@ public class ConfigManager extends Observable {
 
 	private static volatile ConfigManager instance;
 	private WeakReference<Context> mContextRef;
-	private ConfigRWer mRWer;
+	private ReaderWriter mRWer;
 	private String filePath;
 	private String fileName;
 	private EnumConfigType eType;
@@ -53,13 +53,12 @@ public class ConfigManager extends Observable {
 	
 	private ConfigManager(Context context, IConfigData configData)
 	{
-		mRWer = new RWerImpl();
 		mContextRef = new WeakReference<Context>(context);
 		mConfigData = configData;
 		mNameMap = new SingletonValueMap<String, String>();
 		if (null != mConfigData) {
-			updateNameMap(ObjectHelper.getFieldNames(mConfigData),
-					ObjectHelper.getFieldTargetNameValues(mConfigData));
+			updateNameMap(ObjectReflector.getFieldNames(mConfigData),
+					ObjectReflector.getFieldTargetNameValues(mConfigData));
 		}
 	}
 	
@@ -87,12 +86,13 @@ public class ConfigManager extends Observable {
 		eType = type;
 		fileName = name;
 		setFilePath(name);
+		mRWer = ReaderWriterFactory.getInstance().getReaderWriterImpl(eType);
 		try {
 			if (null == defaultName || "".equals(defaultName)) {
 				defaultName = fileName;
 			}
 			creatFileIfNotExist(filePath, defaultName);
-			mRWer.loadFile(fileName, eType, mContextRef.get());
+			mRWer.loadFile(fileName, mContextRef.get());
 			reLoadAllValue();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -104,7 +104,8 @@ public class ConfigManager extends Observable {
 		switch (eType)
 		{
 		case XML:
-			filePath = "/data/data/" + mContextRef.get().getPackageName() + "/shared_prefs/" + name + eType.value();
+			filePath = "/data/data/" + mContextRef.get().getPackageName() + "/shared_prefs/" + name
+					+ eType.value();
 			break;
 			
 		case PROP:
@@ -149,18 +150,22 @@ public class ConfigManager extends Observable {
 		}
 		if (null != is) {
 			StreamHelper.output(is, mContextRef.get().openFileOutput(fileName + EnumConfigType.PROP.value(), 
-					Context.MODE_MULTI_PROCESS | Context.MODE_WORLD_READABLE
-					| Context.MODE_WORLD_WRITEABLE));
-			mRWer.loadFile(fileName, EnumConfigType.PROP, mContextRef.get());
+					Context.MODE_MULTI_PROCESS));
+			ReaderWriterFactory.getInstance().getReaderWriterImpl(EnumConfigType.PROP)
+					.loadFile(fileName, mContextRef.get());
+//			mRWer.loadFile(fileName, mContextRef.get());
 			try {
 				reLoadAllValue();
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			}
 			if (EnumConfigType.XML == eType) {
-				mRWer.loadFile(fileName, EnumConfigType.XML, mContextRef.get());
+				ReaderWriterFactory.getInstance().getReaderWriterImpl(EnumConfigType.XML)
+						.loadFile(fileName, mContextRef.get());
+//				mRWer.loadFile(fileName, EnumConfigType.XML, mContextRef.get());
 				commit();
-				new File(mContextRef.get().getFilesDir() + "/" + fileName + EnumConfigType.PROP.value()).delete();
+				new File(mContextRef.get().getFilesDir() + "/" + fileName
+						+ EnumConfigType.PROP.value()).delete();
 			}
 		}
 	}
@@ -186,7 +191,7 @@ public class ConfigManager extends Observable {
 		Map<String, ?> map = mRWer.getAll();
 		for (Map.Entry<String, ?> entry : map.entrySet()) {
 			try {
-				ObjectHelper.setFieldValue(mConfigData, mNameMap.getKeyByValue(entry.getKey()),
+				ObjectReflector.setFieldValue(mConfigData, mNameMap.getKeyByValue(entry.getKey()),
 						entry.getValue());
 			} catch (NoSuchFieldException e) {
 				continue;
@@ -257,8 +262,8 @@ public class ConfigManager extends Observable {
 		if (null == mConfigData) {
 			return this;
 		}
-		String[] names = ObjectHelper.getFieldNames(mConfigData);
-		Object[] values = ObjectHelper.getFieldValues(mConfigData);
+		String[] names = ObjectReflector.getFieldNames(mConfigData);
+		Object[] values = ObjectReflector.getFieldValues(mConfigData);
 		Map<String, Object> map = new Hashtable<String, Object>();
 		for (int i = 0; i < names.length; i ++) {
 			map.put(mNameMap.get(names[i]), values[i]);

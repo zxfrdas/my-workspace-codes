@@ -1,9 +1,9 @@
 package com.zt.lib.impl.test;
 
 import com.zt.lib.annotations.TargetName;
-import com.zt.lib.config.BaseConfigData;
+import com.zt.lib.config.IConfigData;
 
-public class TestObject implements BaseConfigData {
+public class TestObject implements IConfigData {
 	@TargetName("pInt")
 	public int publicInt = 0;
 	@TargetName("pBoolean")
