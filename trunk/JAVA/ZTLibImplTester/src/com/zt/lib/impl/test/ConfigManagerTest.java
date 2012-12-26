@@ -7,7 +7,7 @@ import java.util.Observer;
 import android.content.SharedPreferences;
 import android.test.AndroidTestCase;
 
-import com.zt.lib.ObjectHelper;
+import com.zt.lib.ObjectReflector;
 import com.zt.lib.Print;
 import com.zt.lib.config.ConfigManager;
 import com.zt.lib.config.EnumConfigType;
@@ -36,9 +36,9 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 		mExpectObject.publicInt = 1;
 		mExpectObject.publicBoolean = false;
 		mExpectObject.publicString = "privateString";
-		names = ObjectHelper.getFieldNames(mTestObject);
-		values = ObjectHelper.getFieldValues(mTestObject);
-		expects = ObjectHelper.getFieldValues(mExpectObject);
+		names = ObjectReflector.getFieldNames(mTestObject);
+		values = ObjectReflector.getFieldValues(mTestObject);
+		expects = ObjectReflector.getFieldValues(mExpectObject);
 		mConfigManager = ConfigManager.getInstance(getContext(), mTestObject);
 		mConfigManager.addObserver(this);
 		mConfigManager.loadFile(FILE_NAME, FILE_NAME, EnumConfigType.PROP);
@@ -81,7 +81,7 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 		}
 		for (int i = 0; i < names.length; i ++) {
 			try {
-				assertEquals(expects[i], ObjectHelper.getFieldValue(mTestObject, names[i]));
+				assertEquals(expects[i], ObjectReflector.getFieldValue(mTestObject, names[i]));
 			} catch (NoSuchFieldException e) {
 				e.printStackTrace();
 			}
@@ -97,7 +97,7 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 		}
 		for (int i = 0; i < names.length; i ++) {
 			try {
-				assertEquals(expects[i], ObjectHelper.getFieldValue(mTestObject, names[i]));
+				assertEquals(expects[i], ObjectReflector.getFieldValue(mTestObject, names[i]));
 			} catch (NoSuchFieldException e) {
 				e.printStackTrace();
 			}
@@ -113,7 +113,7 @@ public class ConfigManagerTest extends AndroidTestCase implements Observer {
 		}
 		for (int i = 0; i < names.length; i ++) {
 			try {
-				assertEquals(expects[i], ObjectHelper.getFieldValue(mTestObject, names[i]));
+				assertEquals(expects[i], ObjectReflector.getFieldValue(mTestObject, names[i]));
 			} catch (NoSuchFieldException e) {
 				e.printStackTrace();
 			}

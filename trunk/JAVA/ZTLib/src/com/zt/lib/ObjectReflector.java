@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 
 import com.zt.lib.annotations.TargetName;
 
-public class ObjectHelper {
+public class ObjectReflector {
 	
 	/**
 	 * 对象浅层拷贝。用于仅包含基础类型的对象的拷贝。仅赋值同名属性。

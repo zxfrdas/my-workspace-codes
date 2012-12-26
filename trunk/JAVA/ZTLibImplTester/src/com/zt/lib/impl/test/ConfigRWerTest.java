@@ -12,17 +12,17 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.test.AndroidTestCase;
 
-import com.zt.lib.ObjectHelper;
+import com.zt.lib.ObjectReflector;
 import com.zt.lib.Print;
 import com.zt.lib.StreamHelper;
-import com.zt.lib.config.ConfigRWer;
 import com.zt.lib.config.EnumConfigType;
-import com.zt.lib.config.RWerImpl;
+import com.zt.lib.config.ReaderWriter;
+import com.zt.lib.config.ReaderWriterFactory;
 
 public class ConfigRWerTest extends AndroidTestCase {
 
 	private static final String FILE_NAME = "testLoadFile";
-	ConfigRWer mRWer;
+	ReaderWriter mRWer;
 	TestObject mTestObject;
 	TestObject mExpectObject;
 	SharedPreferences mSp;
@@ -36,7 +36,7 @@ public class ConfigRWerTest extends AndroidTestCase {
 	{
 		super.setUp();
 		Print.setTAG(AllTests.TAG);
-		mRWer = new RWerImpl();
+		mRWer = ReaderWriterFactory.getInstance().getReaderWriterImpl(EnumConfigType.XML);
 		mTestObject = new TestObject();
 		InputStream is = getContext().getAssets().open(FILE_NAME + EnumConfigType.PROP.value());
 		FileOutputStream fos = getContext().openFileOutput(FILE_NAME + EnumConfigType.PROP.value(),
@@ -53,8 +53,8 @@ public class ConfigRWerTest extends AndroidTestCase {
 		set.add("f");
 		editor.putStringSet("pStringArray", set);
 		editor.commit();
-		names = ObjectHelper.getFieldTargetNameValues(mTestObject);
-		values = ObjectHelper.getFieldValues(mTestObject);
+		names = ObjectReflector.getFieldTargetNameValues(mTestObject);
+		values = ObjectReflector.getFieldValues(mTestObject);
 		mExpectObject = new TestObject();
 		mExpectObject.publicInt = 1;
 		mExpectObject.publicBoolean = false;
@@ -62,10 +62,10 @@ public class ConfigRWerTest extends AndroidTestCase {
 		mExpectObject.publicStringArray[0] = "d";
 		mExpectObject.publicStringArray[1] = "e";
 		mExpectObject.publicStringArray[2] = "f";
-		expects = ObjectHelper.getFieldValues(mExpectObject);
+		expects = ObjectReflector.getFieldValues(mExpectObject);
 		index = 0;
 		try {
-			mRWer.loadFile(FILE_NAME, EnumConfigType.XML, getContext());
+			mRWer.loadFile(FILE_NAME, getContext());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -142,33 +142,33 @@ public class ConfigRWerTest extends AndroidTestCase {
 	public void testSetInt() throws NoSuchFieldException, IOException
 	{
 		mRWer.setInt("pInt", 0).commit();
-		assertEquals(ObjectHelper.getFieldValue(mTestObject, "publicInt"),
+		assertEquals(ObjectReflector.getFieldValue(mTestObject, "publicInt"),
 				mRWer.getInt("pInt"));
 	}
 
 	public void testSetBoolean() throws NoSuchFieldException, IOException
 	{
 		mRWer.setBoolean("pBoolean", true).commit();
-		assertEquals(ObjectHelper.getFieldValue(mTestObject, "publicBoolean"),
+		assertEquals(ObjectReflector.getFieldValue(mTestObject, "publicBoolean"),
 				mRWer.getBoolean("pBoolean"));
 	}
 
 	public void testSetString() throws NoSuchFieldException, IOException
 	{
 		mRWer.setString("pString", "publicString").commit();
-		assertEquals(ObjectHelper.getFieldValue(mTestObject, "publicString"),
+		assertEquals(ObjectReflector.getFieldValue(mTestObject, "publicString"),
 				mRWer.getString("pString"));
 	}
 	
 	public void testSetStringArray() throws NoSuchFieldException, IOException
 	{
 		mRWer.setStringArray("pStringArray", 
-				((String[])ObjectHelper.getFieldValue(mTestObject, "publicStringArray"))).commit();
-		assertEquals(((String[])ObjectHelper.getFieldValue(mTestObject, "publicStringArray"))[0], 
+				((String[])ObjectReflector.getFieldValue(mTestObject, "publicStringArray"))).commit();
+		assertEquals(((String[])ObjectReflector.getFieldValue(mTestObject, "publicStringArray"))[0], 
 				mRWer.getStringArray("pStringArray")[2]);
-		assertEquals(((String[])ObjectHelper.getFieldValue(mTestObject, "publicStringArray"))[1], 
+		assertEquals(((String[])ObjectReflector.getFieldValue(mTestObject, "publicStringArray"))[1], 
 				mRWer.getStringArray("pStringArray")[0]);
-		assertEquals(((String[])ObjectHelper.getFieldValue(mTestObject, "publicStringArray"))[2], 
+		assertEquals(((String[])ObjectReflector.getFieldValue(mTestObject, "publicStringArray"))[2], 
 				mRWer.getStringArray("pStringArray")[1]);
 	}
 
