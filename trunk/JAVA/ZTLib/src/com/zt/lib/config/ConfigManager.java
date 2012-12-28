@@ -153,7 +153,6 @@ public class ConfigManager extends Observable {
 					Context.MODE_MULTI_PROCESS));
 			ReaderWriterFactory.getInstance().getReaderWriterImpl(EnumConfigType.PROP)
 					.loadFile(fileName, mContextRef.get());
-//			mRWer.loadFile(fileName, mContextRef.get());
 			try {
 				reLoadAllValue();
 			} catch (IllegalArgumentException e) {
@@ -162,7 +161,6 @@ public class ConfigManager extends Observable {
 			if (EnumConfigType.XML == eType) {
 				ReaderWriterFactory.getInstance().getReaderWriterImpl(EnumConfigType.XML)
 						.loadFile(fileName, mContextRef.get());
-//				mRWer.loadFile(fileName, EnumConfigType.XML, mContextRef.get());
 				commit();
 				new File(mContextRef.get().getFilesDir() + "/" + fileName
 						+ EnumConfigType.PROP.value()).delete();
