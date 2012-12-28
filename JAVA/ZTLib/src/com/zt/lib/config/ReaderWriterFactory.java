@@ -42,19 +42,6 @@ public final class ReaderWriterFactory {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
-//		switch (eType)
-//		{
-//		case XML:
-//			configRWer = new XmlReaderWriterImpl();
-//			break;
-//			
-//		case PROP:
-//			configRWer = new PropReaderWriterImpl();
-//			break;
-//
-//		default:
-//			break;
-//		}
 		return configRWer;
 	}
 	
