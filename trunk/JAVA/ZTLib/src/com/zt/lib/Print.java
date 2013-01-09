@@ -1,6 +1,5 @@
 package com.zt.lib;
 
-import android.database.Cursor;
 import android.util.Log;
 
 public class Print {
@@ -39,7 +38,6 @@ public class Print {
 	{
 		if (printable) {
 			StackTraceElement line = new Throwable().getStackTrace()[1];
-
 			if (line != null) {
 				Log.d(TAG, "File[" + line.getFileName() + "]Line[" + line.getLineNumber()
 						+ "]Msg[" + o.toString() + "]");
@@ -69,13 +67,4 @@ public class Print {
 		}
 	}
 	
-	public static void cursor(Cursor c)
-	{
-		if (printable) {
-			String names[] = c.getColumnNames();
-			for (String name : names) {
-				d(name + " = " + c.getString(c.getColumnIndex(name)));
-			}
-		}
-	}
 }

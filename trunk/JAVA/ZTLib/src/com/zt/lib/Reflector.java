@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 
 import com.zt.lib.annotations.TargetName;
 
-public class ObjectReflector {
+public class Reflector {
 	
 	/**
 	 * 对象浅层拷贝。用于仅包含基础类型的对象的拷贝。仅赋值同名属性。
@@ -175,7 +175,8 @@ public class ObjectReflector {
 	 * @throws NoSuchFieldException 未找到指定名称的变量
 	 * @throws IllegalArgumentException 试图设置的值不正确
 	 */
-	public static void setFieldValue(Object o, String fieldName, Object value) throws IllegalArgumentException,
+	public static void setFieldValue(Object o, String fieldName, Object value)
+			throws IllegalArgumentException,
 			NoSuchFieldException
 	{
 		Field field = o.getClass().getDeclaredField(fieldName);
@@ -188,7 +189,8 @@ public class ObjectReflector {
 	}
 	
 	/**
-	 * 尝试输入的对象转型为指定对象。目前支持转为int/Integer,float/Float,long/Long,boolean/Boolean,String 
+	 * 尝试输入的对象转型为指定对象。
+	 * <p>目前支持转为int/Integer,float/Float,long/Long,boolean/Boolean,String 
 	 * @param type 希望转为的型
 	 * @param value 被转型对象
 	 * @return 转型后的对象

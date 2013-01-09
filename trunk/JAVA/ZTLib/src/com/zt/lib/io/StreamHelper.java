@@ -1,4 +1,4 @@
-package com.zt.lib;
+package com.zt.lib.io;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
