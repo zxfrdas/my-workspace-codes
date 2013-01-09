@@ -227,7 +227,8 @@ public class SetValueProperties extends SetValueMap {
                         continue;
                     }
                 } else if (count <= 4) {
-                    throw new IllegalArgumentException("Invalid Unicode sequence: illegal character");
+					throw new IllegalArgumentException(
+							"Invalid Unicode sequence: illegal character");
                 }
                 mode = NONE;
                 buf[offset++] = (char) unicode;
@@ -341,7 +342,8 @@ public class SetValueProperties extends SetValueMap {
             buf[offset++] = nextChar;
         }
         if (mode == UNICODE && count <= 4) {
-            throw new IllegalArgumentException("Invalid Unicode sequence: expected format \\uxxxx");
+			throw new IllegalArgumentException(
+					"Invalid Unicode sequence: expected format \\uxxxx");
         }
         if (keyLength == -1 && offset > 0) {
             keyLength = offset;

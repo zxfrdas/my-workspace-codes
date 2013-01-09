@@ -111,7 +111,9 @@ namespace SQLiteEditor {
                         }
                     }
                     for (int i = 0; i < mKVBox.Controls.Count / 2; i++) {
-                        values.Add(key[i], value[i]);
+                        if (0 != value.Length) {
+                            values.Add(key[i], value[i]);
+                        }
                     }
                     DataBaseHelper.update(mSqlCon, mTreeView.SelectedNode.Text, values,
                         mDataWhereBox.Text + mWhereArg.Text);
