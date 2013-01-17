@@ -7,7 +7,6 @@ import java.util.Observer;
 import android.content.SharedPreferences;
 import android.test.AndroidTestCase;
 
-import com.zt.lib.ObjectReflector;
 import com.zt.lib.Print;
 import com.zt.lib.config.ConfigManager;
 import com.zt.lib.config.EnumConfigType;
