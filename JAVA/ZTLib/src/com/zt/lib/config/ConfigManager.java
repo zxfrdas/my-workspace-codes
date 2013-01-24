@@ -14,6 +14,7 @@ import android.content.Context;
 import com.zt.lib.Reflector;
 import com.zt.lib.Print;
 import com.zt.lib.collect.SingletonValueMap;
+import com.zt.lib.exceptions.NullArgException;
 import com.zt.lib.io.StreamHelper;
 
 /**
@@ -94,7 +95,7 @@ public class ConfigManager extends Observable {
 	 *            保存配置文件类型
 	 * @throws IllegalArgumentException
 	 */
-	public void loadFile(String name, String defaultName, EnumConfigType type)
+	public void initConfigFile(String name, String defaultName, EnumConfigType type)
 			throws IllegalArgumentException
 	{
 		eType = type;
@@ -105,9 +106,12 @@ public class ConfigManager extends Observable {
 			if (null == defaultName || "".equals(defaultName)) {
 				defaultName = fileName;
 			}
-			creatFileIfNotExist(filePath, defaultName);
-			mRWer.loadFile(fileName, mContextRef.get());
-			reLoadAllValue();
+			if (!new File(filePath).exists()) {
+				resetToDefault(defaultName);
+			} else {
+				mRWer.loadFile(fileName, mContextRef.get());
+				reLoadAllValue();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -128,23 +132,7 @@ public class ConfigManager extends Observable {
 			break;
 		}
 	}
-
-	/**
-	 * 判断文件是否存在。若不存在，则从assets目录读取默认配置然后创建文件，写入默认配置。
-	 * 
-	 * @param filePath
-	 *            文件路径
-	 * @param defaultName
-	 *            assets目录下指定名称的默认配置文件
-	 * @throws IOException
-	 */
-	private void creatFileIfNotExist(String filePath, String defaultName) throws IOException
-	{
-		if (!new File(filePath).exists()) {
-			reLoadDefaultValue(defaultName);
-		}
-	}
-
+	
 	/**
 	 * 获取配置参数类的唯一实例，供UI根据用户选择修改配置数据。
 	 * 
@@ -156,42 +144,6 @@ public class ConfigManager extends Observable {
 	}
 
 	/**
-	 * 从assets目录下读取指定名称的默认配置文件，恢复内存中数值和文件中数值。
-	 * 
-	 * @param name
-	 *            默认配置文件名
-	 */
-	public void reLoadDefaultValue(String name) throws IOException
-	{
-		InputStream is = null;
-		try {
-			is = mContextRef.get().getAssets().open(name + EnumConfigType.PROP.value());
-		} catch (FileNotFoundException e) {
-			is = null;
-		}
-		if (null != is) {
-			StreamHelper.output(
-					is,
-					mContextRef.get().openFileOutput(fileName + EnumConfigType.PROP.value(),
-							Context.MODE_MULTI_PROCESS));
-			ReaderWriterFactory.getInstance().getReaderWriterImpl(EnumConfigType.PROP)
-					.loadFile(fileName, mContextRef.get());
-			try {
-				reLoadAllValue();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			}
-			if (EnumConfigType.XML == eType) {
-				ReaderWriterFactory.getInstance().getReaderWriterImpl(EnumConfigType.XML)
-						.loadFile(fileName, mContextRef.get());
-				commit();
-				new File(mContextRef.get().getFilesDir() + "/" + fileName
-						+ EnumConfigType.PROP.value()).delete();
-			}
-		}
-	}
-
-	/**
 	 * 获取当前配置文件所在的绝对路径
 	 * 
 	 * @return filePath
@@ -199,28 +151,6 @@ public class ConfigManager extends Observable {
 	public String getCurFilePath()
 	{
 		return filePath;
-	}
-
-	/**
-	 * 重新从文件中读取配置数据赋值给配置参数类，放弃了所有未提交的更改。
-	 * 
-	 * @throws IllegalArgumentException
-	 */
-	public void reLoadAllValue() throws IllegalArgumentException
-	{
-		if (null == mConfigData) {
-			return;
-		}
-		Map<String, ?> map = mRWer.getAll();
-		for (Map.Entry<String, ?> entry : map.entrySet()) {
-			try {
-				Reflector.setFieldValue(mConfigData, mNameMap.getKeyByValue(entry.getKey()),
-						entry.getValue());
-			} catch (NoSuchFieldException e) {
-				continue;
-			}
-		}
-		notifyConfigChanged();
 	}
 
 	/**
@@ -269,6 +199,108 @@ public class ConfigManager extends Observable {
 	}
 
 	/**
+	 * 从assets目录下读取指定名称的默认配置文件，恢复内存中数值和文件中数值。
+	 * 
+	 * @param name
+	 *            默认配置文件名
+	 */
+	public void resetToDefault(String name) throws IOException
+	{
+		InputStream is = null;
+		try {
+			is = mContextRef.get().getAssets().open(name + EnumConfigType.PROP.value());
+		} catch (FileNotFoundException e) {
+			is = null;
+		}
+		if (null != is) {
+			StreamHelper.output(
+					is,
+					mContextRef.get().openFileOutput(fileName + EnumConfigType.PROP.value(),
+							Context.MODE_MULTI_PROCESS));
+			mRWer = ReaderWriterFactory.getInstance().getReaderWriterImpl(EnumConfigType.PROP);
+			mRWer.loadFile(fileName, mContextRef.get());
+			try {
+				reLoadAllValue();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			}
+			if (EnumConfigType.XML == eType) {
+				mRWer = ReaderWriterFactory.getInstance().getReaderWriterImpl(EnumConfigType.XML);
+				mRWer.loadFile(fileName, mContextRef.get());
+				commit();
+				new File(mContextRef.get().getFilesDir() + "/" + fileName
+						+ EnumConfigType.PROP.value()).delete();
+			}
+		}
+	}
+
+	/**
+	 * 重新从文件中读取配置数据赋值给配置参数类，放弃了所有未提交的更改。
+	 * 
+	 * @throws IllegalArgumentException
+	 */
+	public void reLoadAllValue() throws IllegalArgumentException
+	{
+		if (null == mConfigData) {
+			return;
+		}
+		Map<String, ?> map = mRWer.getAll();
+		for (Map.Entry<String, ?> entry : map.entrySet()) {
+			try {
+				Reflector.setFieldValue(mConfigData, mNameMap.getKeyByValue(entry.getKey()),
+						entry.getValue());
+			} catch (NoSuchFieldException e) {
+				continue;
+			}
+		}
+		notifyConfigChanged();
+	}
+	
+	/**
+	 * 将指定输入流中的数据赋值给配置参数类，不写入文件。
+	 * <p>可用于根据规定，在一定条件下临时变更配置参数
+	 * @param is 包含配置参数键值对的文件输入流
+	 * @throws NullArgException 输入流为空时抛出错误
+	 */
+	public void loadFile(InputStream is) throws NullArgException
+	{
+		if (null == is) throw new NullArgException();
+		try {
+			StreamHelper.output(
+					is,
+					mContextRef.get().openFileOutput(fileName + EnumConfigType.PROP.value(),
+							Context.MODE_MULTI_PROCESS));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		ReaderWriter tempRWer = ReaderWriterFactory.getInstance().getReaderWriterImpl(
+				EnumConfigType.PROP);
+		try {
+			tempRWer.loadFile(fileName, mContextRef.get());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		tempLoadValue(tempRWer);
+	}
+	
+	private void tempLoadValue(ReaderWriter rw)
+	{
+		if (null == mConfigData) {
+			return;
+		}
+		Map<String, ?> map = rw.getAll();
+		for (Map.Entry<String, ?> entry : map.entrySet()) {
+			try {
+				Reflector.setFieldValue(mConfigData, mNameMap.getKeyByValue(entry.getKey()),
+						entry.getValue());
+			} catch (NoSuchFieldException e) {
+				continue;
+			}
+		}
+		notifyConfigChanged();
+	}
+	
+	/**
 	 * 提交更改，将所有数据写入文件
 	 * 
 	 * @throws IOException
@@ -276,12 +308,11 @@ public class ConfigManager extends Observable {
 	public void commit() throws IOException
 	{
 		setAllValue();
-		mRWer.commit();
 		notifyConfigChanged();
 	}
 
 	/**
-	 * 将配置参数类中的值写入内存中MAP里对应的键值对。
+	 * 将配置参数类中的值写入文件。
 	 * 
 	 * @throws IOException
 	 */
@@ -296,7 +327,7 @@ public class ConfigManager extends Observable {
 		for (int i = 0; i < names.length; i++) {
 			map.put(mNameMap.get(names[i]), values[i]);
 		}
-		mRWer.setAll(map);
+		mRWer.setAll(map).commit();
 		return this;
 	}
 
