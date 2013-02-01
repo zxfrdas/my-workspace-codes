@@ -265,10 +265,11 @@ public class ConfigManager extends Observable {
 	public void loadFile(InputStream is) throws NullArgException
 	{
 		if (null == is) throw new NullArgException();
+		String tempFile = "tempFile";
 		try {
 			StreamHelper.output(
 					is,
-					mContextRef.get().openFileOutput(fileName + EnumConfigType.PROP.value(),
+					mContextRef.get().openFileOutput(tempFile + EnumConfigType.PROP.value(),
 							Context.MODE_MULTI_PROCESS));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -276,7 +277,7 @@ public class ConfigManager extends Observable {
 		ReaderWriter tempRWer = ReaderWriterFactory.getInstance().getReaderWriterImpl(
 				EnumConfigType.PROP);
 		try {
-			tempRWer.loadFile(fileName, mContextRef.get());
+			tempRWer.loadFile(tempFile, mContextRef.get());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
