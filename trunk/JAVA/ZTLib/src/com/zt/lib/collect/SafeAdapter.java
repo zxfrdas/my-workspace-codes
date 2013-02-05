@@ -101,9 +101,6 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListe
 		if (null == datas || datas.isEmpty())
 			throw new NullArgException();
 		synchronized (mDatas) {
-			if (null == mDatas) {
-				mDatas = new ArrayList<T>();
-			}
 			mDatas.clear();
 			for (T data : datas) {
 				mDatas.add(data);
@@ -139,9 +136,6 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListe
 		if (null == datas || 0 == datas.length)
 			throw new NullArgException();
 		synchronized (mDatas) {
-			if (null == mDatas) {
-				mDatas = new ArrayList<T>();
-			}
 			mDatas.clear();
 			for (T data : datas) {
 				mDatas.add(data);
@@ -163,9 +157,6 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListe
 		if (null == data)
 			throw new NullArgException();
 		synchronized (mDatas) {
-			if (null == mDatas) {
-				mDatas = new ArrayList<T>();
-			}
 			mDatas.add(data);
 		}
 		postNotifyDataSetChanged();
@@ -193,9 +184,6 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListe
 	public void clearData()
 	{
 		synchronized (mDatas) {
-			if (null == mDatas) {
-				mDatas = new ArrayList<T>();
-			}
 			mDatas.clear();
 		}
 		postNotifyDataSetChanged();
@@ -205,18 +193,15 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListe
 	public int getCount()
 	{
 		synchronized (mDatas) {
-			if (null != mDatas) {
-				return mDatas.size();
-			}
+			return mDatas.size();
 		}
-		return 0;
 	}
 
 	@Override
 	public T getItem(int position)
 	{
 		synchronized (mDatas) {
-			if (null != mDatas && !mDatas.isEmpty() && position >= 0
+			if (!mDatas.isEmpty() && position >= 0
 					&& position < mDatas.size()) {
 				return mDatas.get(position);
 			}
