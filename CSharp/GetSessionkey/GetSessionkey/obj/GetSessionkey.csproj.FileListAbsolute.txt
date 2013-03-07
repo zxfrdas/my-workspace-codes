@@ -1,0 +1,8 @@
+E:\GetSessionkey\GetSessionkey\obj\Debug\ResolveAssemblyReference.cache
+E:\GetSessionkey\GetSessionkey\obj\Debug\GetSessionkey.FrmGetSessionKey.resources
+E:\GetSessionkey\GetSessionkey\obj\Debug\GetSessionkey.Properties.Resources.resources
+E:\GetSessionkey\GetSessionkey\obj\Debug\GetSessionkey.csproj.GenerateResource.Cache
+E:\GetSessionkey\GetSessionkey\bin\Debug\GetSessionkey.exe
+E:\GetSessionkey\GetSessionkey\bin\Debug\GetSessionkey.pdb
+E:\GetSessionkey\GetSessionkey\obj\Debug\GetSessionkey.exe
+E:\GetSessionkey\GetSessionkey\obj\Debug\GetSessionkey.pdb
