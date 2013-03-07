@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Net;
 using System.Text;
 using System.Windows.Forms;
 
@@ -14,7 +15,9 @@ namespace GetSessionkey
         /// ÊÚÈ¨Âë
         /// </summary>
         public string AuthrizeCode = "";
-        private string url = "http://open.taobao.com/authorize/?appkey=21180870";
+        //private string url = "http://open.taobao.com/authorize/?appkey=21408568";
+        private String url = "http://container.api.taobao.com/container?appkey=21408568";
+        private String url2 = "https://oauth.taobao.com/authorize?response_type=token&client_id=21408568";
 
         public FrmGetSessionKey()
         {
@@ -57,6 +60,26 @@ namespace GetSessionkey
         private void FrmGetSessionKey_Load(object sender, EventArgs e)
         {
             wbGetSessionkey.Navigate(url);
+        }
+
+        private void beforNavigate(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            Console.WriteLine(e.Url.OriginalString);
+            string cookieStr = wbGetSessionkey.Document.Cookie;
+            HttpWebRequest myHttpWebRequest = (HttpWebRequest)HttpWebRequest.Create(e.Url.ToString());
+            HttpWebResponse myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
+            myHttpWebRequest.AllowAutoRedirect = false;
+            myHttpWebRequest.Headers.Add(HttpRequestHeader.Cookie, cookieStr);
+            myHttpWebRequest.Referer = "http://container.api.taobao.com/container";
+            myHttpWebRequest.UserAgent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; CIBA; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; TheWorld)";
+
+            string videoUrl = myHttpWebResponse.GetResponseHeader("Location");
+            Console.WriteLine(videoUrl);
+        }
+
+        private void Navigated(object sender, WebBrowserNavigatedEventArgs e)
+        {
+            Console.WriteLine(e.Url.AbsoluteUri);
         }
 
     }

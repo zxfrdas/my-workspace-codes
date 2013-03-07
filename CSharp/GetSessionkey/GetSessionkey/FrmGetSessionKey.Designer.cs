@@ -39,6 +39,9 @@
             this.wbGetSessionkey.Name = "wbGetSessionkey";
             this.wbGetSessionkey.Size = new System.Drawing.Size(918, 523);
             this.wbGetSessionkey.TabIndex = 0;
+            this.wbGetSessionkey.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
+            this.wbGetSessionkey.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.Navigated);
+            this.wbGetSessionkey.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.beforNavigate);
             // 
             // FrmGetSessionKey
             // 
