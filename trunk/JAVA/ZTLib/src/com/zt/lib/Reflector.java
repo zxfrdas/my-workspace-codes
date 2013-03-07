@@ -190,7 +190,8 @@ public class Reflector {
 	
 	/**
 	 * 尝试输入的对象转型为指定对象。
-	 * <p>目前支持转为int/Integer,float/Float,long/Long,boolean/Boolean 
+	 * <p>目前支持String转为int/Integer,float/Float,long/Long,boolean/Boolean
+	 * <p>以及String[]转为 int[]/Integer[],float[]/Float[],long[]/Long[],boolean[]/Boolean[]
 	 * @param type 希望转为的型
 	 * @param value 被转型对象
 	 * @return 转型后的对象
@@ -232,6 +233,12 @@ public class Reflector {
 				newValue = new Boolean[((String[])value).length];
 				for (String o : (String[])value) {
 					((Boolean[])newValue)[index] = Boolean.valueOf(o);
+				}
+			} else if (String[].class.equals(type)) {
+				int index = 0;
+				newValue = new String[((String[])value).length];
+				for (String o : (String[])value) {
+					((String[])newValue)[index] = o;
 				}
 			}
 		}
