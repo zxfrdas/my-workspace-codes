@@ -241,10 +241,15 @@ public class ConfigManager extends Observable {
 	 */
 	public void reLoadAllValue() throws IllegalArgumentException
 	{
+		reLoadAllValue(mRWer);
+	}
+	
+	private void reLoadAllValue(ReaderWriter rw)
+	{
 		if (null == mConfigData) {
 			return;
 		}
-		Map<String, ?> map = mRWer.getAll();
+		Map<String, ?> map = rw.getAll();
 		for (Map.Entry<String, ?> entry : map.entrySet()) {
 			try {
 				Reflector.setFieldValue(mConfigData, mNameMap.getKeyByValue(entry.getKey()),
@@ -262,7 +267,7 @@ public class ConfigManager extends Observable {
 	 * @param is 包含配置参数键值对的文件输入流
 	 * @throws NullArgException 输入流为空时抛出错误
 	 */
-	public void loadFile(InputStream is) throws NullArgException
+	public void tempLoadFile(InputStream is) throws NullArgException
 	{
 		if (null == is) throw new NullArgException();
 		String tempFile = "tempFile";
@@ -281,24 +286,7 @@ public class ConfigManager extends Observable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		tempLoadValue(tempRWer);
-	}
-	
-	private void tempLoadValue(ReaderWriter rw)
-	{
-		if (null == mConfigData) {
-			return;
-		}
-		Map<String, ?> map = rw.getAll();
-		for (Map.Entry<String, ?> entry : map.entrySet()) {
-			try {
-				Reflector.setFieldValue(mConfigData, mNameMap.getKeyByValue(entry.getKey()),
-						entry.getValue());
-			} catch (NoSuchFieldException e) {
-				continue;
-			}
-		}
-		notifyConfigChanged();
+		reLoadAllValue(tempRWer);
 	}
 	
 	/**
