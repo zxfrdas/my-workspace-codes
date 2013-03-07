@@ -40,6 +40,7 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListe
 		public abstract void reset();
 	}
 
+	private final Object mLock = new Object();
 	private List<T> mDatas;
 	private LayoutInflater mInflater;
 	private WeakReference<Context> mContextRef;
@@ -100,7 +101,10 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListe
 	{
 		if (null == datas || datas.isEmpty())
 			throw new NullArgException();
-		synchronized (mDatas) {
+		synchronized (mLock) {
+			if (null == mDatas) {
+				mDatas = new ArrayList<T>();
+			}
 			mDatas.clear();
 			for (T data : datas) {
 				mDatas.add(data);

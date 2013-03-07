@@ -190,7 +190,7 @@ public class Reflector {
 	
 	/**
 	 * 尝试输入的对象转型为指定对象。
-	 * <p>目前支持转为int/Integer,float/Float,long/Long,boolean/Boolean,String 
+	 * <p>目前支持转为int/Integer,float/Float,long/Long,boolean/Boolean 
 	 * @param type 希望转为的型
 	 * @param value 被转型对象
 	 * @return 转型后的对象
@@ -198,26 +198,41 @@ public class Reflector {
 	public static Object formatObjectType(Class<?> type, Object value)
 	{
 		Object newValue = null;
-		if (int.class.equals(type)
-				|| Integer.class.equals(type)) {
-			newValue = Integer.valueOf(value.toString());
-		} else if (float.class.equals(type)
-				|| Float.class.equals(type)) {
-			newValue = Float.valueOf(value.toString());
-		} else if (long.class.equals(type)
-				|| Long.class.equals(type)) {
-			newValue = Long.valueOf(value.toString());
-		} else if (boolean.class.equals(type)
-				|| Boolean.class.equals(type)) {
-			newValue = Boolean.valueOf(value.toString());
-		} else if (String.class.equals(type)) {
-			newValue = value.toString();
-		} else if (String[].class.equals(type)) {
-			newValue = new String[((String[]) value).length];
-			int index = 0;
-			for (String s : (String[]) value) {
-				((String[]) newValue)[index] = s;
-				index ++;
+		if (value instanceof String) {
+			if (int.class.equals(type) || Integer.class.equals(type)) {
+				newValue = Integer.valueOf(value.toString());
+			} else if (float.class.equals(type) || Float.class.equals(type)) {
+				newValue = Float.valueOf(value.toString());
+			} else if (long.class.equals(type) || Long.class.equals(type)) {
+				newValue = Long.valueOf(value.toString());
+			} else if (boolean.class.equals(type) || Boolean.class.equals(type)) {
+				newValue = Boolean.valueOf(value.toString());
+			}
+		} else if (value instanceof String[]) {
+			if (int[].class.equals(type) || Integer[].class.equals(type)) {
+				int index = 0;
+				newValue = new Integer[((String[])value).length];
+				for (String o : (String[])value) {
+					((Integer[])newValue)[index] = Integer.valueOf(o);
+				}
+			} else if (float[].class.equals(type) || Float[].class.equals(type)) {
+				int index = 0;
+				newValue = new Float[((String[])value).length];
+				for (String o : (String[])value) {
+					((Float[])newValue)[index] = Float.valueOf(o);
+				}
+			} else if (long[].class.equals(type) || Long[].class.equals(type)) {
+				int index = 0;
+				newValue = new Long[((String[])value).length];
+				for (String o : (String[])value) {
+					((Long[])newValue)[index] = Long.valueOf(o);
+				}
+			} else if (boolean[].class.equals(type) || Boolean[].class.equals(type)) {
+				int index = 0;
+				newValue = new Boolean[((String[])value).length];
+				for (String o : (String[])value) {
+					((Boolean[])newValue)[index] = Boolean.valueOf(o);
+				}
 			}
 		}
 		return newValue;
