@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre7"/>
-	<classpathentry kind="lib" path="/MyLibs/taobao-sdk-java-online_standard-20130307-source.jar"/>
 	<classpathentry kind="lib" path="/MyLibs/taobao-sdk-java-online_standard-20130307.jar" sourcepath="/MyLibs/taobao-sdk-java-online_standard-20130307-source.jar"/>
+	<classpathentry kind="lib" path="/ApacheLibs/commons-logging-1.1.1.jar" sourcepath="/ApacheLibs/commons-logging-1.1.1-sources.jar"/>
 	<classpathentry kind="lib" path="/MyLibs/httpcore-4.2.jar"/>
 	<classpathentry kind="lib" path="/MyLibs/httpmime-4.2-zt.jar"/>
 	<classpathentry kind="output" path="bin"/>
