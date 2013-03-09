@@ -4,9 +4,7 @@ import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.UserBuyerGetRequest;
-import com.taobao.api.request.UserGetRequest;
 import com.taobao.api.response.UserBuyerGetResponse;
-import com.taobao.api.response.UserGetResponse;
 
 public class APITest {
 	// "http://gw.api.tbsandbox.com/router/rest";// 沙箱环境调用地址
