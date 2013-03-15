@@ -2,7 +2,9 @@ package com.zt.lib.collect;
 
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Set;
+
 
 /**
  * 通过修改Hashtable类，实现了一个key为String，value为Set<String>的Map类。
@@ -16,7 +18,7 @@ public class SetValueMap extends Hashtable<String, Set<String>> {
 	@Override
 	public synchronized Set<String> put(String key, Set<String> value)
 	{
-		for (Entry<String, Set<String>> entry : entrySet()) {
+		for (Map.Entry<String, Set<String>> entry : entrySet()) {
 			if (entry.getKey().equals(key)) {
 				for (String s : value) {
 					entry.getValue().add(s);
