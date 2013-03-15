@@ -14,17 +14,28 @@ public class StreamHelper {
 	 * @return 转换后的字符串
 	 * @throws IOException
 	 */
-	public static String toString(InputStream stream) throws IOException
+	public static String toString(InputStream stream)
 	{
+		StringBuffer sb = new StringBuffer();
 		byte[] buffer = new byte[1024];
 		int length = 0;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		while (-1 != (length = stream.read(buffer))) {
-			baos.write(buffer, 0, length);
+		try {
+			while (-1 != (length = stream.read(buffer))) {
+				baos.write(buffer, 0, length);
+			}
+			sb.append(baos.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stream.close();
+				baos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		String str = new String(baos.toByteArray());
-		baos.close();
-		return str.toString();
+		return sb.toString();
 	}
 	
 	/**
@@ -33,16 +44,24 @@ public class StreamHelper {
 	 * @param os 输出流
 	 * @throws IOException
 	 */
-	public static void output(InputStream is, OutputStream os) throws IOException
+	public static void output(InputStream is, OutputStream os)
 	{
 		byte[] buffer = new byte[1024];
 		int count = 0;
-		while ((count = is.read(buffer)) > 0) {
-			os.write(buffer, 0, count);
+		try {
+			while ((count = is.read(buffer)) > 0) {
+				os.write(buffer, 0, count);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				os.close();
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		os.flush();
-		os.close();
-		is.close();
 	}
 	
 }
