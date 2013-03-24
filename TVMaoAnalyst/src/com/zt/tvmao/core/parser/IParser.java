@@ -13,19 +13,31 @@ public interface IParser {
 		/**
 		 * 电视猫搜索结果页面中的频道
 		 */
-		channel,
+		CHANNEL("Channel"),
 		/**
 		 * 电视猫频道详情页面
 		 */
-		channelDetail,
+		CHANNEL_DETAIL("ChannelDetail"),
 		/**
 		 * 电视猫搜索结果页面中的节目
 		 */
-		event,
+		EVENT("Event"),
 		/**
 		 * 电视猫节目详情页面
 		 */
-		eventDetail;
+		EVENT_DETAIL("EventDetail");
+		
+		String value = "";
+		
+		ParserType(String value) {
+			this.value = value;
+		}
+		
+		public String getStringValue()
+		{
+			return this.value;
+		}
+		
 	}
 	
 	/**

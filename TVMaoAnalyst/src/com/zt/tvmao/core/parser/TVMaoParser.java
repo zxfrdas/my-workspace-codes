@@ -3,25 +3,21 @@ package com.zt.tvmao.core.parser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import com.zt.tvmao.core.travers.ChannelTraversor;
-import com.zt.tvmao.core.travers.EventTraversor;
+import com.zt.tvmao.core.cache.TVMaoClassMap;
 import com.zt.tvmao.core.travers.TVMaoNodeTraversor;
-import com.zt.tvmao.core.visitors.ChannelVisitor;
-import com.zt.tvmao.core.visitors.EventVisitor;
-import com.zt.tvmao.core.visitors.TVMaoNodeVisitor;
 import com.zt.tvmao.util.TVMaoHtmlVistor;
 
 public class TVMaoParser implements IParser {
 	private static final String BASE_URL = "http://www.tvmao.com";
-	private TVMaoHtmlVistor htmlVistor;
+	private TVMaoHtmlVistor mHtmlVistor;
 	private Document mDocument;
-	private TVMaoNodeVisitor mVisitor;
+	private TVMaoClassMap mClassMap;
 	private TVMaoNodeTraversor mTraversor;
 	private TVMaoPage mTvMaoPage;
 	
 	public TVMaoParser() {
-		htmlVistor = new TVMaoHtmlVistor();
-		mVisitor = null;
+		mHtmlVistor = new TVMaoHtmlVistor();
+		mClassMap = TVMaoClassMap.getInstance();
 		mTraversor = null;
 		mTvMaoPage = null;
 	}
@@ -29,35 +25,40 @@ public class TVMaoParser implements IParser {
 	@Override
 	public TVMaoPage parser(String url, ParserType type)
 	{
-		if (!htmlVistor.isSameUrl(url)) {
-			mDocument = Jsoup.parseBodyFragment(htmlVistor.getHtml(url), BASE_URL);
+		if (!mHtmlVistor.isSameUrl(url)) {
+			mDocument = Jsoup.parseBodyFragment(mHtmlVistor.getHtml(url), BASE_URL);
 		}
-		switch (type)
+		mTraversor = mClassMap.getTraversor(type, mClassMap.getVisitor(type));
+		mTraversor.setDocument(mDocument);
+		mTvMaoPage = new TVMaoPage(mTraversor.traverse());
+/*		switch (type)
 		{
-		case channel:
+		case CHANNEL:
 			mVisitor = new ChannelVisitor();
-			mTraversor = new ChannelTraversor(mDocument, mVisitor);
+			mTraversor = new ChannelTraversor(mVisitor);
+			mTraversor.setDocument(mDocument);
 			mTvMaoPage = new TVMaoPage(mTraversor.traverse());
 			break;
 			
-		case channelDetail:
+		case CHANNEL_DETAIL:
 			break;
 			
-		case event:
+		case EVENT:
 			//TODO-第一步解析搜索结果中的节目
 			mVisitor = new EventVisitor();
-			mTraversor = new EventTraversor(mDocument, mVisitor);
+			mTraversor = new EventTraversor(mVisitor);
+			mTraversor.setDocument(mDocument);
 			mTvMaoPage = new TVMaoPage(mTraversor.traverse(), 40);
 			//TODO-第二步解析所有节目的详情页面，获取图片地址
 			//TODO-第三步解析当前页标、总页数、上一页和下一页的地址
 			break;
 			
-		case eventDetail:
+		case EVENT_DETAIL:
 			break;
 
 		default:
 			break;
-		}
+		}*/
 		return mTvMaoPage;
 	}
 }

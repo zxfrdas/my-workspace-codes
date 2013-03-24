@@ -45,7 +45,6 @@ public class TVMaoHtmlVistor {
 	public String getHtml(String url)
 	{
 		StringBuffer sb = new StringBuffer();
-		System.out.println(url);
 		HttpGet httpGet = new HttpGet(url);
 		try {
 			HttpResponse response = httpClient.execute(httpGet);
@@ -65,6 +64,7 @@ public class TVMaoHtmlVistor {
 			e.printStackTrace();
 		} finally {
 			httpClient.getConnectionManager().shutdown();
+			this.url = url;
 		}
 		return sb.toString();
 	}

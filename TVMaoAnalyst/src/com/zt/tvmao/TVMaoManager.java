@@ -30,14 +30,14 @@ public class TVMaoManager {
 	{
 		switch (type)
 		{
-		case channel:
+		case CHANNEL:
 			if (1 == page) {
 				mChannelCacher.put(mParser.parser(TVMaoUrlBuilder.query(keyWord), type));
 			}
 			mChannelCacher.get(page);
 			break;
 			
-		case event:
+		case EVENT:
 			if (1 == page) {
 				mEventCacher.put(mParser.parser(TVMaoUrlBuilder.query(keyWord), type));
 			}

@@ -4,6 +4,7 @@ import java.lang.ref.WeakReference;
 
 import org.jsoup.select.NodeVisitor;
 
+import com.zt.tvmao.util.Utility;
 import com.zt.tvmao.vo.TVMaoObject;
 
 /**
@@ -35,8 +36,7 @@ public abstract class TVMaoNodeVisitor implements NodeVisitor {
 	 */
 	public boolean isListenerNull()
 	{
-		return (null == mListenerRef)
-				|| ((null != mListenerRef) && (null == mListenerRef.get()));
+		return Utility.isRefNull(mListenerRef);
 	}
 	
 	/**
