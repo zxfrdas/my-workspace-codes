@@ -1,9 +1,12 @@
 package com.zt.lib.io;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 
 public class StreamHelper {
@@ -12,7 +15,6 @@ public class StreamHelper {
 	 * 将InputStream转换为字符串
 	 * @param stream
 	 * @return 转换后的字符串
-	 * @throws IOException
 	 */
 	public static String toString(InputStream stream)
 	{
@@ -39,10 +41,38 @@ public class StreamHelper {
 	}
 	
 	/**
+	 * 将输入流用指定编码转为字符串
+	 * @param in 输入流
+	 * @param charset 指定编码格式
+	 * @return 转换后的字符串
+	 */
+	public static String toString(InputStream in, Charset charset)
+	{
+		StringBuilder sb = new StringBuilder();
+		BufferedReader br = new BufferedReader(new InputStreamReader(in,
+				charset));
+		try {
+			String str = null;
+			while (null != (str = br.readLine())) {
+				sb.append(str).append(System.getProperty("line.separator"));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return sb.toString();
+		
+	}
+	
+	/**
 	 * 将输入流写入输出流中
 	 * @param is 输入流
 	 * @param os 输出流
-	 * @throws IOException
 	 */
 	public static void output(InputStream is, OutputStream os)
 	{
@@ -56,6 +86,7 @@ public class StreamHelper {
 			e.printStackTrace();
 		} finally {
 			try {
+				os.flush();
 				os.close();
 				is.close();
 			} catch (IOException e) {
