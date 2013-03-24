@@ -2,7 +2,6 @@ package com.zt.tvmao.core.travers;
 
 import java.util.List;
 
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import com.zt.tvmao.core.visitors.TVMaoNodeVisitor;
@@ -17,12 +16,11 @@ public class ChannelTraversor extends TVMaoNodeTraversor {
 	private static final String NAME = "t_q_tab_channel";
 	
 	/**
-	 * 传入HTML文档以及HTML解析规则，构造HTML解析工作类。
-	 * @param document HTML文档
+	 * 传入HTML解析规则，构造HTML解析工作类。
 	 * @param visitor HTML解析规则
 	 */
-	public ChannelTraversor(Document document, TVMaoNodeVisitor visitor) {
-		super(document, visitor);
+	public ChannelTraversor(TVMaoNodeVisitor visitor) {
+		super(visitor);
 	}
 
 	@Override

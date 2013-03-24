@@ -20,11 +20,15 @@ public abstract class TVMaoNodeTraversor extends NodeTraversor implements
 	protected List<TVMaoObject> mDatas;
 	protected Document mDocument;
 	
-	public TVMaoNodeTraversor(Document document, TVMaoNodeVisitor visitor) {
+	public TVMaoNodeTraversor(TVMaoNodeVisitor visitor) {
 		super(visitor);
-		mDocument = document;
 		visitor.setParserListener(this);
 		mDatas = new ArrayList<TVMaoObject>();
+	}
+	
+	public void setDocument(Document document)
+	{
+		mDocument = document;
 	}
 	
 	/**

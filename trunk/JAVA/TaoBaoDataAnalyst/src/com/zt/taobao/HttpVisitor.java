@@ -1,9 +1,10 @@
-package com.zt.tvmao.util;
+package com.zt.taobao;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -16,25 +17,12 @@ import org.apache.http.params.HttpConnectionParams;
 
 import com.zt.lib.io.StreamHelper;
 
-/**
- * 提供使用HttpGet方法访问电视猫网站的方法
- * @author zhaotong
- */
-public class TVMaoHtmlVistor {
-	private static final int TIME_OUT = 5 * 1000;
-	private HttpClient httpClient;
-	private String url;
+public class HttpVisitor {
 
-	/**
-	 * 构造器
-	 * <p>初始化一个默认超时时间为5秒的{@link HttpClient}
-	 */
-	public TVMaoHtmlVistor()
+	private static final int TIME_OUT = 5 * 1000;
+	
+	public HttpVisitor()
 	{
-		httpClient = new DefaultHttpClient();
-		httpClient.getParams().setParameter(HttpConnectionParams.CONNECTION_TIMEOUT, TIME_OUT);
-		httpClient.getParams().setIntParameter(HttpConnectionParams.SO_TIMEOUT, TIME_OUT);
-		url = "";
 	}
 	
 	/**
@@ -45,12 +33,15 @@ public class TVMaoHtmlVistor {
 	public String getHtml(String url)
 	{
 		StringBuffer sb = new StringBuffer();
+		HttpClient httpClient = new DefaultHttpClient();
+		httpClient.getParams().setParameter(HttpConnectionParams.CONNECTION_TIMEOUT, TIME_OUT);
+		httpClient.getParams().setIntParameter(HttpConnectionParams.SO_TIMEOUT, TIME_OUT);
 		HttpGet httpGet = new HttpGet(url);
 		try {
 			HttpResponse response = httpClient.execute(httpGet);
 			if (HttpStatus.SC_OK == response.getStatusLine().getStatusCode()) {
 				InputStream inputStream = response.getEntity().getContent();
-				sb.append(StreamHelper.toString(inputStream));
+				sb.append(StreamHelper.toString(inputStream, Charset.forName("GBK")));
 			}
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -64,24 +55,8 @@ public class TVMaoHtmlVistor {
 			e.printStackTrace();
 		} finally {
 			httpClient.getConnectionManager().shutdown();
-			this.url = url;
 		}
 		return sb.toString();
-	}
-	
-	/**
-	 * 返回电视猫中查询指定关键字所得的页面内容
-	 * @param keyWord 关键字
-	 * @return HTML页面内容
-	 */
-	public String query(String keyWord)
-	{
-		return getHtml(TVMaoUrlBuilder.query(keyWord));
-	}
-	
-	public boolean isSameUrl(String url)
-	{
-		return this.url.equals(url);
 	}
 	
 }
