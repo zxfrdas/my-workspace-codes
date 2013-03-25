@@ -7,10 +7,9 @@ import java.util.Map;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class HttpParser {
+public class HDMIParser {
 	private static final String ITEM_URL = "h3>a[href]";
 	private static final String BUYER_LIST = "div#J_showBuyerList>button#J_listBuyerOnView";
 	private static final String NEXT_PAGE = "a[href].J_TAjaxTrigger:contains(下一页)";
@@ -27,12 +26,12 @@ public class HttpParser {
 	private Map<String, String> mCache;
 	private Count mCount;
 	
-	public HttpParser() {
+	public HDMIParser() {
 		mCache = new HashMap<String, String>(4);
 		mCount = new Count();
 	}
 	
-	public HttpParser(String startUrl) {
+	public HDMIParser(String startUrl) {
 		this();
 		mStartUrl = startUrl;
 	}
