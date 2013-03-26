@@ -1,15 +1,15 @@
 package com.zt.taobao;
 
 public class Item {
-	public Float length;
-	public Float price;
-	public Integer number;
+	public String length;
+	public String price;
+	public String number;
 	public String color;
 	
 	public Item() {
-		length = 0f;
-		price = 0f;
-		number = 0;
+		length = "";
+		price = "";
+		number = "";
 		color = "";
 	}
 

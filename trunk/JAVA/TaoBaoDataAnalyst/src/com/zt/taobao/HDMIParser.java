@@ -20,7 +20,7 @@ public class HDMIParser {
 	public static final String KEY_PRICE = "price";
 	public static final String KEY_NUMBER = "number";
 	public static final String KEY_COLOR = "color";
-	public static final String KEY_LENGTH = "length";
+	public static final String KEY_TYPE = "length";
 	
 	private String mStartUrl;
 	private Map<String, String> mCache;
@@ -112,14 +112,14 @@ public class HDMIParser {
 		return elements.size();
 	}
 	
-	private Float getPrice()
+	private String getPrice()
 	{
-		return Float.valueOf(mCache.get(KEY_PRICE));
+		return mCache.get(KEY_PRICE);
 	}
 	
-	private Integer getNumber()
+	private String getNumber()
 	{
-		return Integer.valueOf(mCache.get(KEY_NUMBER));
+		return mCache.get(KEY_NUMBER);
 	}
 	
 	private void parserPriceAndNumber(String content, int itemIndex)
@@ -133,22 +133,16 @@ public class HDMIParser {
 	{
 		Elements elements = parser(content, COLOR_AND_LENGTH);
 		String str = elements.get(itemIndex).text();
+		System.out.println(str);
 		String color = str.substring(str.lastIndexOf("颜色分类:") + 5, str.lastIndexOf(";"));
-		String length = str.substring(str.lastIndexOf(":") + 1, str.length() - 1);
-		try {
-			Float.valueOf(length);
-		} catch (NumberFormatException e) {
-			length = "0.0";
-		} finally {
-			
-		}
+		String type = str.substring(str.lastIndexOf(":") + 1, str.length() - 1);
 		mCache.put(KEY_COLOR, color);
-		mCache.put(KEY_LENGTH, length);
+		mCache.put(KEY_TYPE, type);
 	}
 	
-	private Float getLength()
+	private String getLength()
 	{
-		return Float.valueOf(mCache.get(KEY_LENGTH));
+		return mCache.get(KEY_TYPE);
 	}
 	
 	private String getColor()

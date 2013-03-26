@@ -112,14 +112,14 @@ public class BattaryParser {
 		return elements.size();
 	}
 	
-	private Float getPrice()
+	private String getPrice()
 	{
-		return Float.valueOf(mCache.get(KEY_PRICE));
+		return mCache.get(KEY_PRICE);
 	}
 	
-	private Integer getNumber()
+	private String getNumber()
 	{
-		return Integer.valueOf(mCache.get(KEY_NUMBER));
+		return mCache.get(KEY_NUMBER);
 	}
 	
 	private void parserPriceAndNumber(String content, int itemIndex)
@@ -133,22 +133,31 @@ public class BattaryParser {
 	{
 		Elements elements = parser(content, COLOR_AND_LENGTH);
 		String str = elements.get(itemIndex).text();
-		String color = str.substring(str.lastIndexOf("颜色分类:") + 5, str.lastIndexOf(";"));
-		String length = str.substring(str.lastIndexOf(":") + 1, str.length() - 1);
+		String color = str.substring(str.lastIndexOf("颜色分类:") + 5, str.length());
+		String length = "未知";
 		try {
-			Float.valueOf(length);
-		} catch (NumberFormatException e) {
-			length = "0.0";
-		} finally {
-			
+			length = str.substring(0, str.lastIndexOf("毫安"));
+			final int len = length.length();
+			for (int i = 0; i < len; i ++) {
+				String temp = length.substring(i, len);
+				try {
+					Integer.valueOf(temp);
+					length = temp;
+					break;
+				} catch (NumberFormatException e) {
+					continue;
+				}
+			}
+		} catch (IndexOutOfBoundsException e) {
+			e.printStackTrace();
 		}
 		mCache.put(KEY_COLOR, color);
 		mCache.put(KEY_LENGTH, length);
 	}
 	
-	private Float getLength()
+	private String getLength()
 	{
-		return Float.valueOf(mCache.get(KEY_LENGTH));
+		return mCache.get(KEY_LENGTH);
 	}
 	
 	private String getColor()

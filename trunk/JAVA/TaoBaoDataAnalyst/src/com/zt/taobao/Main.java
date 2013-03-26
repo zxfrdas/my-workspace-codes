@@ -1,29 +1,23 @@
 package com.zt.taobao;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-	private static final int DEEPTH = 1;
+	private static final int DEEPTH = 4;
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		List<Item> items = new ArrayList<Item>();
-		HDMIParser parser = new HDMIParser();
+//		HDMIParser parser = new HDMIParser();
+		BattaryParser parser = new BattaryParser();
 		HttpVisitor visitor = new HttpVisitor();
 		String nextPage = null;
 		String content = null;
 		for (int i = 0; i < DEEPTH; i ++) {
-			try {
-				content = visitor.getHtml(String.format(Params.SEARCH,
-						URLEncoder.encode("HDMI连接线", "UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+			content = visitor.getHtml(Params.BATTARY);
 			parser.parserShopPage(visitor.getHtml(parser
 					.parserResultPage(content, i)));
 			content = null;
