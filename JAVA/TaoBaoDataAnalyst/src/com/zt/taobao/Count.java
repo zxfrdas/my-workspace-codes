@@ -5,19 +5,19 @@ import java.util.Map;
 
 public class Count {
 	
-	private Map<Float, Integer> mPriceCount;
-	private Map<Float, Integer> mLengthCount;
-	private Map<Integer, Integer> mNumberCount;
+	private Map<String, Integer> mPriceCount;
+	private Map<String, Integer> mTypeCount;
+	private Map<String, Integer> mNumberCount;
 	private Map<String, Integer> mColorCount;
 	
 	public Count() {
-		mPriceCount = new HashMap<Float, Integer>();
-		mLengthCount = new HashMap<Float, Integer>();
-		mNumberCount = new HashMap<Integer, Integer>();
+		mPriceCount = new HashMap<String, Integer>();
+		mTypeCount = new HashMap<String, Integer>();
+		mNumberCount = new HashMap<String, Integer>();
 		mColorCount = new HashMap<String, Integer>();
 	}
 	
-	public void addPrice(Float key)
+	public void addPrice(String key)
 	{
 		int before = 0;
 		if (null != mPriceCount.get(key)) {
@@ -26,16 +26,16 @@ public class Count {
 		mPriceCount.put(key, before + 1);
 	}
 	
-	public void addLength(Float key)
+	public void addLength(String key)
 	{
 		int before = 0;
-		if (null != mLengthCount.get(key)) {
-			before = mLengthCount.get(key);
+		if (null != mTypeCount.get(key)) {
+			before = mTypeCount.get(key);
 		}
-		mLengthCount.put(key, before + 1);
+		mTypeCount.put(key, before + 1);
 	}
 	
-	public void addNumber(Integer key)
+	public void addNumber(String key)
 	{
 		int before = 0;
 		if (null != mNumberCount.get(key)) {
@@ -64,19 +64,19 @@ public class Count {
 	public String getCount()
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append("价格统计：").append("\n");
-		for (Map.Entry<Float, Integer> entry : mPriceCount.entrySet()) {
+		sb.append("商品价格：").append("\n");
+		for (Map.Entry<String, Integer> entry : mPriceCount.entrySet()) {
 			sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("\n");
 		}
-		sb.append("长度统计：").append("\n");
-		for (Map.Entry<Float, Integer> entry : mLengthCount.entrySet()) {
+		sb.append("商品种类：").append("\n");
+		for (Map.Entry<String, Integer> entry : mTypeCount.entrySet()) {
 			sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("\n");
 		}
-		sb.append("数量统计：").append("\n");
-		for (Map.Entry<Integer, Integer> entry : mNumberCount.entrySet()) {
-			sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("\n");
-		}
-		sb.append("颜色统计：").append("\n");
+//		sb.append("数量统计：").append("\n");
+//		for (Map.Entry<String, Integer> entry : mNumberCount.entrySet()) {
+//			sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("\n");
+//		}
+		sb.append("颜色分类：").append("\n");
 		for (Map.Entry<String, Integer> entry : mColorCount.entrySet()) {
 			sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("\n");
 		}
@@ -86,7 +86,7 @@ public class Count {
 	public void clear()
 	{
 		mPriceCount.clear();
-		mLengthCount.clear();
+		mTypeCount.clear();
 		mNumberCount.clear();
 		mColorCount.clear();
 	}
