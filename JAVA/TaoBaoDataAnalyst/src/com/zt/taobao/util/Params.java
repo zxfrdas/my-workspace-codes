@@ -1,4 +1,4 @@
-package com.zt.taobao;
+package com.zt.taobao.util;
 
 public class Params {
 
