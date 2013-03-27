@@ -1,4 +1,4 @@
-package com.zt.taobao;
+package com.zt.taobao.util;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -3,6 +3,11 @@ package com.zt.taobao;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zt.taobao.parser.BattaryParser;
+import com.zt.taobao.parser.ITaoBaoParser;
+import com.zt.taobao.util.HttpVisitor;
+import com.zt.taobao.util.Params;
+
 public class Main {
 	private static final int DEEPTH = 4;
 
@@ -11,22 +16,21 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		List<Item> items = new ArrayList<Item>();
-//		HDMIParser parser = new HDMIParser();
-		BattaryParser parser = new BattaryParser();
+//		ITaoBaoParser parser = new HDMIParser();
+		ITaoBaoParser parser = new BattaryParser();
 		HttpVisitor visitor = new HttpVisitor();
 		String nextPage = null;
-		String content = null;
 		for (int i = 0; i < DEEPTH; i ++) {
-			content = visitor.getHtml(Params.BATTARY);
-			parser.parserShopPage(visitor.getHtml(parser
-					.parserResultPage(content, i)));
-			content = null;
-			while (null != (nextPage = parser.getNextPageUrl(content))) {
+			String firstUrl = parser.getRecordUrlFromShop(visitor.getHtml(parser
+					.getShopUrlFromResult(visitor.getHtml(Params.BATTARY), i)));
+			System.out.println(firstUrl);
+			String content = null;
+			while (null != (nextPage = parser.getNextRecordPageUrl(content, firstUrl))) {
 				content = visitor.getHtml(nextPage);
-				items.addAll(parser.parserPage(content));
+				items.addAll(parser.parserRecordPage(content));
 			}
 		}
-		System.out.println(parser.getCount());
+		System.out.println(parser.getOutput());
 	}
 
 }
