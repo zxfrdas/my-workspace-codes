@@ -239,6 +239,7 @@ public class Reflector {
 				newValue = new String[((String[])value).length];
 				for (String o : (String[])value) {
 					((String[])newValue)[index] = o;
+					index ++;
 				}
 			}
 		}
