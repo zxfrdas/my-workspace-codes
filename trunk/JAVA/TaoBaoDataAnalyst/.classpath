@@ -16,8 +16,12 @@
 	<classpathentry kind="lib" path="/ApacheLibs/POI/poi-ooxml-schemas-3.9-20121203.jar"/>
 	<classpathentry kind="lib" path="/ApacheLibs/POI/poi-3.9-20121203.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="file:/D:/其他项目/my-workspace-codes/common/ApacheLibs/POI/docs/apidocs/"/>
+			<attribute name="javadoc_location" value="file:/D:/码农/workspace/common/ApacheLibs/POI/docs/apidocs/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/ApacheLibs/POI/lib/junit-3.8.1.jar"/>
+	<classpathentry kind="lib" path="/ApacheLibs/POI/ooxml-lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="/ApacheLibs/POI/ooxml-lib/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="/ApacheLibs/POI/ooxml-lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

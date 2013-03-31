@@ -19,7 +19,7 @@ import com.zt.lib.io.StreamHelper;
 
 public class HttpVisitor {
 
-	private static final int TIME_OUT = 5 * 1000;
+	private static final int TIME_OUT = 10 * 1000;
 	
 	public HttpVisitor()
 	{

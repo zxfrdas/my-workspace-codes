@@ -87,7 +87,7 @@ public abstract class AbstractTaoBaoParser implements ITaoBaoParser {
 			item.price = getPrice();
 			item.number = getNumber();
 			item.color = getColor();
-			item.length = getType();
+			item.type = getType();
 			mCount.add(item);
 			items.add(item);
 		}

@@ -36,7 +36,7 @@ public class BattaryParser extends AbstractTaoBaoParser {
 			e.printStackTrace();
 		}
 		mCache.put(KEY_COLOR, color);
-		mCache.put(KEY_TYPE, length);
+		mCache.put(KEY_TYPE, length.trim());
 	}
 
 }
