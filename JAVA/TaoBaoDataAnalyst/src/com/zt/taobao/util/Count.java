@@ -58,7 +58,7 @@ public class Count {
 	public void add(Item item)
 	{
 		addPrice(item.price);
-		addLength(item.length);
+		addLength(item.type);
 		addNumber(item.number);
 		addColor(item.color);
 	}
