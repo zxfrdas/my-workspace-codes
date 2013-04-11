@@ -85,18 +85,26 @@ public class Reflector {
 	}
 	
 	/**
-	 * 将对象中变量（包括私有变量）及其值构造为字符串返回。
+	 * 将对象中变量（公共变量）及其值构造为字符串返回。
 	 * @param object 试图打印的对象
 	 * @return 字符串形如"键 = 值"
 	 */
 	public static String toString(Object object)
 	{
 		StringBuilder builder = new StringBuilder();
-		Field[] fields = object.getClass().getDeclaredFields();
+		Field[] fields = object.getClass().getFields();
 		for (Field field : fields) {
 			try {
-				field.setAccessible(true);
-				builder.append("\n" + field.getName() + " = " + field.get(object));
+				Object o = field.get(object);
+				if (o instanceof String[]) {
+					for (int index = 0; index < ((String[])o).length; index ++) {
+						builder.append("\n").append(field.getName()).append("[")
+								.append(index).append("]").append(" = ")
+								.append(((String[]) o)[index]);
+					}
+				} else {
+					builder.append("\n" + field.getName() + " = " + o);
+				}
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {

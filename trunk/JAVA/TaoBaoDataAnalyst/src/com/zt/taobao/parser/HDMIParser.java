@@ -18,7 +18,6 @@ public class HDMIParser extends AbstractTaoBaoParser {
 	{
 		Elements elements = parser(content, COLOR_AND_TYPE);
 		String str = elements.get(itemIndex).text();
-		System.out.println(str);
 		String color = str.substring(str.lastIndexOf("颜色分类:") + 5, str.lastIndexOf(";"));
 		String type = str.substring(str.lastIndexOf(":") + 1, str.length() - 1);
 		mCache.put(KEY_COLOR, color);
