@@ -47,21 +47,22 @@ namespace SQLiteEditor {
             if (TABLE_LEVEL == e.Node.Level) {
                 DataTable table = DataBaseHelper.queryReturnTable(mSqlCon, "*",
                     e.Node.Text, null);
-                String[] names = new String[table.Columns.Count];
+                String[] names = new String[table.Columns.Count + 1];
                 int index = 0;
                 mDataView.DataSource = table;
                 foreach (DataColumn dc in table.Columns) {
                     names[index] = dc.ColumnName;
                     index++;
                 }
-                foreach (Control c in mKVBox.Controls) {
+                names[names.Length - 1] = "null";
+                foreach (Control c in mKVContainer.Controls) {
                     if (c is ComboBox) {
-                        ((ComboBox)c).DataSource = names.ToList();
+                        (c as ComboBox).DataSource = names.ToList();
                     }
                 }
                 foreach (Control c in mWhereBox.Controls) {
-                    if (c is ComboBox) {
-                        ((ComboBox)c).DataSource = names.ToList();
+                    if (c is ComboBox && c.Tag.Equals("name")) {
+                        (c as ComboBox).DataSource = names.ToList();
                     }
                 }
             }
@@ -95,51 +96,79 @@ namespace SQLiteEditor {
         private void onClick(object sender, EventArgs e)
         {
             if (sender is Button) {
-                if (!"".Equals(mDataKeyBox.Text) && !"".Equals(mDataValue.Text)) {
-                    Dictionary<String, String> values = new Dictionary<String, String>();
-                    String[] key = new String[mKVBox.Controls.Count / 2];
-                    int iKey = 0;
-                    String[] value = new String[mKVBox.Controls.Count / 2];
-                    int iValue = 0;
-                    foreach (Control c in mKVBox.Controls) {
-                        if (c is ComboBox) {
-                            key[iKey] = c.Text;
-                            iKey++;
-                        } else if (c is TextBox) {
-                            value[iValue] = c.Text;
-                            iValue++;
-                        }
-                    }
-                    for (int i = 0; i < mKVBox.Controls.Count / 2; i++) {
-                        if (0 != value.Length) {
-                            values.Add(key[i], value[i]);
-                        }
-                    }
-                    DataBaseHelper.update(mSqlCon, mTreeView.SelectedNode.Text, values,
-                        mDataWhereBox.Text + mWhereArg.Text);
-                    mDataView.DataSource = DataBaseHelper.queryReturnTable(mSqlCon,
-                        "*", mTreeView.SelectedNode.Text, null);
-                }
+                handleUpdateOnClick();
             } else if (sender is ToolStripMenuItem) {
-                Console.WriteLine("sender is ToolStripMenuItem");
-                ToolStripMenuItem item = sender as ToolStripMenuItem;
-                if (null != item) {
-                    switch (item.MergeIndex) {
-                    case MENU_OPEN:
-                        openFileDialog1.ShowDialog();
-                        break;
+                handleMenuOnClick(sender);
+            }
+        }
 
-                    case MENU_ABOUT:
-                        MessageBox.Show(Properties.Resources.aboutContent1 + System.Environment.
-                            NewLine + Properties.Resources.aboutContent2 + System.Environment.
-                            NewLine, Properties.Resources.aboutTitle);
-                        break;
+        private void handleUpdateOnClick()
+        {
+            if (!"".Equals(mDataKeyBox.Text) && !"".Equals(mDataValue.Text)) {
+                Dictionary<String, String> nameValues = new Dictionary<String, String>();
+                String[] nameKey = new String[mKVContainer.Controls.Count / 2];
+                int nameKeyIndex = 0;
+                String[] nameValue = new String[mKVContainer.Controls.Count / 2];
+                int nameValueIndex = 0;
+                foreach (Control c in mKVContainer.Controls) {
+                    if (c is ComboBox) {
+                        nameKey[nameKeyIndex] = c.Text;
+                        nameKeyIndex++;
+                    } else if (c is TextBox) {
+                        nameValue[nameValueIndex] = c.Text;
+                        nameValueIndex++;
+                    }
+                }
+                nameKey = delSameElement(nameKey);
+                for (int i = 0; i < mKVContainer.Controls.Count / 2; i++) {
+                    if (0 != nameValue.Length && null != nameKey[i]) {
+                        nameValues.Add(nameKey[i], nameValue[i]);
+                    }
+                }
+                DataBaseHelper.update(mSqlCon, mTreeView.SelectedNode.Text, nameValues,
+                    mWhereKey.Text + "=" + mWhereValue.Text);
+                mDataView.DataSource = DataBaseHelper.queryReturnTable(mSqlCon,
+                    "*", mTreeView.SelectedNode.Text, null);
+            }
+        }
 
-                    default:
-                        break;
+        private void handleMenuOnClick(Object sender)
+        {
+            Console.WriteLine("sender is ToolStripMenuItem");
+            ToolStripMenuItem item = sender as ToolStripMenuItem;
+            if (null != item) {
+                switch (item.MergeIndex) {
+                case MENU_OPEN:
+                    openFileDialog1.ShowDialog();
+                    break;
+
+                case MENU_ABOUT:
+                    MessageBox.Show(Properties.Resources.aboutContent1 + System.Environment.
+                        NewLine + Properties.Resources.aboutContent2 + System.Environment.
+                        NewLine, Properties.Resources.aboutTitle);
+                    break;
+
+                default:
+                    break;
+                }
+            }
+        }
+
+        private String[] delSameElement(String[] array)
+        {
+            String[] arrayCopy = new String[array.Length];
+            array.CopyTo(arrayCopy, 0);
+            for (int i = 0; i < arrayCopy.Length - 1; i++) {
+                String left = arrayCopy[i];
+                for (int j = i + 1; j < arrayCopy.Length; j++) {
+                    String right = arrayCopy[j];
+                    if (null != left && null != right && left.Equals(right)) {
+                        arrayCopy[i] = null;
+                        arrayCopy[j] = null;
                     }
                 }
             }
+            return arrayCopy;
         }
 
         private void onFileOk(object sender, CancelEventArgs e)
@@ -149,15 +178,10 @@ namespace SQLiteEditor {
                 mDBPath = dialog.FileName;
                 mSqlCon = DataBaseHelper.connectDB(mDBPath);
                 mSqlCon.Open();
-                mSqlReader = DataBaseHelper.queryReturnReader(mSqlCon, "tbl_name",
-                    "sqlite_master", "type='table'");
                 String[] tableNames = DataBaseHelper.getAllTableName(mSqlCon);
                 TreeNode[] tableNameNodes = new TreeNode[tableNames.Length];
-                int index = 0;
-                while (mSqlReader.Read()) {
-                    tableNameNodes[index] = new TreeNode(mSqlReader.GetString(
-                        mSqlReader.GetOrdinal("tbl_name")));
-                    index++;
+                for (int index = 0; index < tableNames.Length; index++) {
+                    tableNameNodes[index] = new TreeNode(tableNames[index]);
                 }
                 if (null != mTreeView.TopNode.Nodes && 0 != mTreeView.TopNode.Nodes.Count) {
                     mTreeView.TopNode.Nodes.Clear();
@@ -165,6 +189,11 @@ namespace SQLiteEditor {
                 mTreeView.TopNode.Text = mDBPath.Substring(mDBPath.LastIndexOf(@"\") + 1);
                 mTreeView.TopNode.Nodes.AddRange(tableNameNodes);
             }
+        }
+
+        private void 增加_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("施工中。。。", "提醒！", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
     }
