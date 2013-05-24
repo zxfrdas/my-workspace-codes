@@ -110,20 +110,8 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListe
 				mDatas.add(data);
 			}
 		}
-		postNotifyDataSetChanged();
-	}
-	
-	private void postNotifyDataSetChanged()
-	{
-		if (null != mHandlerRef && null != mHandlerRef.get() && mIsAutoNotify) {
-			mHandlerRef.get().post(new Runnable() {
-				
-				@Override
-				public void run()
-				{
-					SafeAdapter.this.notifyDataSetChanged();
-				}
-			});
+		if (mIsAutoNotify) {
+			notifyChanged();
 		}
 	}
 
@@ -145,7 +133,9 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListe
 				mDatas.add(data);
 			}
 		}
-		postNotifyDataSetChanged();
+		if (mIsAutoNotify) {
+			notifyChanged();
+		}
 	}
 
 	/**
@@ -163,7 +153,9 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListe
 		synchronized (mDatas) {
 			mDatas.add(data);
 		}
-		postNotifyDataSetChanged();
+		if (mIsAutoNotify) {
+			notifyChanged();
+		}
 	}
 
 	/**
@@ -179,7 +171,9 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListe
 				mDatas.remove(index);
 			}
 		}
-		postNotifyDataSetChanged();
+		if (mIsAutoNotify) {
+			notifyChanged();
+		}
 	}
 
 	/**
@@ -190,7 +184,9 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListe
 		synchronized (mDatas) {
 			mDatas.clear();
 		}
-		postNotifyDataSetChanged();
+		if (mIsAutoNotify) {
+			notifyChanged();
+		}
 	}
 
 	@Override
@@ -266,5 +262,19 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListe
 	 * 
 	 */
 	public abstract void bindView(ViewHolder viewHolder, int position);
+	
+	public void notifyChanged()
+	{
+		if (null != mHandlerRef && null != mHandlerRef.get()) {
+			mHandlerRef.get().post(new Runnable() {
+				
+				@Override
+				public void run()
+				{
+					SafeAdapter.this.notifyDataSetChanged();
+				}
+			});
+		}
+	}
 
 }

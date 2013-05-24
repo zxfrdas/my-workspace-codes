@@ -25,7 +25,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("");
             this.mTreeView = new System.Windows.Forms.TreeView();
             this.mDataView = new System.Windows.Forms.DataGridView();
             this.mUpdateBtn = new System.Windows.Forms.Button();
@@ -38,17 +38,19 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.mDataKeyBox = new System.Windows.Forms.ComboBox();
             this.mWhereBox = new System.Windows.Forms.GroupBox();
-            this.mDataWhereBox = new System.Windows.Forms.ComboBox();
-            this.mWhereArg = new System.Windows.Forms.TextBox();
-            this.mKVBox = new System.Windows.Forms.GroupBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.增加 = new System.Windows.Forms.Button();
+            this.mWhereValue = new System.Windows.Forms.TextBox();
+            this.mWhereKey = new System.Windows.Forms.ComboBox();
+            this.mKVContainer = new System.Windows.Forms.GroupBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mDataView)).BeginInit();
             this.mMenu.SuspendLayout();
             this.mWhereBox.SuspendLayout();
-            this.mKVBox.SuspendLayout();
+            this.mKVContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // mTreeView
@@ -57,10 +59,10 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.mTreeView.Location = new System.Drawing.Point(12, 143);
             this.mTreeView.Name = "mTreeView";
-            treeNode2.Name = "mBaseNode";
-            treeNode2.Text = "";
+            treeNode3.Name = "mBaseNode";
+            treeNode3.Text = "";
             this.mTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode2});
+            treeNode3});
             this.mTreeView.Size = new System.Drawing.Size(164, 278);
             this.mTreeView.TabIndex = 0;
             this.mTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.mTreeView_AfterSelect);
@@ -87,7 +89,7 @@
             // 
             // mUpdateBtn
             // 
-            this.mUpdateBtn.Location = new System.Drawing.Point(723, 35);
+            this.mUpdateBtn.Location = new System.Drawing.Point(751, 29);
             this.mUpdateBtn.Name = "mUpdateBtn";
             this.mUpdateBtn.Size = new System.Drawing.Size(75, 23);
             this.mUpdateBtn.TabIndex = 5;
@@ -143,7 +145,7 @@
             // 
             this.aboutToolStripMenuItem.MergeIndex = 3;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.onClick);
             // 
@@ -163,61 +165,65 @@
             // 
             // mWhereBox
             // 
-            this.mWhereBox.Controls.Add(this.mWhereArg);
-            this.mWhereBox.Controls.Add(this.mDataWhereBox);
-            this.mWhereBox.Location = new System.Drawing.Point(411, 29);
+            this.mWhereBox.Controls.Add(this.label1);
+            this.mWhereBox.Controls.Add(this.增加);
+            this.mWhereBox.Controls.Add(this.mWhereValue);
+            this.mWhereBox.Controls.Add(this.mWhereKey);
+            this.mWhereBox.Location = new System.Drawing.Point(377, 29);
             this.mWhereBox.Name = "mWhereBox";
-            this.mWhereBox.Size = new System.Drawing.Size(296, 108);
+            this.mWhereBox.Size = new System.Drawing.Size(356, 108);
             this.mWhereBox.TabIndex = 9;
             this.mWhereBox.TabStop = false;
             this.mWhereBox.Text = "where";
             // 
-            // mDataWhereBox
+            // 增加
             // 
-            this.mDataWhereBox.FormattingEnabled = true;
-            this.mDataWhereBox.Location = new System.Drawing.Point(6, 20);
-            this.mDataWhereBox.MaxDropDownItems = 100;
-            this.mDataWhereBox.Name = "mDataWhereBox";
-            this.mDataWhereBox.Size = new System.Drawing.Size(131, 20);
-            this.mDataWhereBox.TabIndex = 4;
+            this.增加.Location = new System.Drawing.Point(304, 18);
+            this.增加.Name = "增加";
+            this.增加.Size = new System.Drawing.Size(40, 21);
+            this.增加.TabIndex = 6;
+            this.增加.Text = "增加";
+            this.增加.UseVisualStyleBackColor = true;
+            this.增加.Click += new System.EventHandler(this.增加_Click);
             // 
-            // mWhereArg
+            // mWhereValue
             // 
-            this.mWhereArg.Location = new System.Drawing.Point(157, 19);
-            this.mWhereArg.Name = "mWhereArg";
-            this.mWhereArg.Size = new System.Drawing.Size(96, 21);
-            this.mWhereArg.TabIndex = 5;
+            this.mWhereValue.Location = new System.Drawing.Point(202, 17);
+            this.mWhereValue.Name = "mWhereValue";
+            this.mWhereValue.Size = new System.Drawing.Size(96, 21);
+            this.mWhereValue.TabIndex = 5;
             // 
-            // mKVBox
+            // mWhereKey
             // 
-            this.mKVBox.Controls.Add(this.textBox2);
-            this.mKVBox.Controls.Add(this.comboBox2);
-            this.mKVBox.Controls.Add(this.textBox1);
-            this.mKVBox.Controls.Add(this.comboBox1);
-            this.mKVBox.Controls.Add(this.mDataKeyBox);
-            this.mKVBox.Controls.Add(this.mDataValue);
-            this.mKVBox.Location = new System.Drawing.Point(13, 29);
-            this.mKVBox.Name = "mKVBox";
-            this.mKVBox.Size = new System.Drawing.Size(269, 108);
-            this.mKVBox.TabIndex = 10;
-            this.mKVBox.TabStop = false;
-            this.mKVBox.Text = "Key-Value";
+            this.mWhereKey.FormattingEnabled = true;
+            this.mWhereKey.Location = new System.Drawing.Point(6, 18);
+            this.mWhereKey.MaxDropDownItems = 100;
+            this.mWhereKey.Name = "mWhereKey";
+            this.mWhereKey.Size = new System.Drawing.Size(131, 20);
+            this.mWhereKey.TabIndex = 4;
+            this.mWhereKey.Tag = "name";
             // 
-            // comboBox1
+            // mKVContainer
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(6, 45);
-            this.comboBox1.MaxDropDownItems = 100;
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(114, 20);
-            this.comboBox1.TabIndex = 7;
+            this.mKVContainer.Controls.Add(this.textBox2);
+            this.mKVContainer.Controls.Add(this.comboBox2);
+            this.mKVContainer.Controls.Add(this.textBox1);
+            this.mKVContainer.Controls.Add(this.comboBox1);
+            this.mKVContainer.Controls.Add(this.mDataKeyBox);
+            this.mKVContainer.Controls.Add(this.mDataValue);
+            this.mKVContainer.Location = new System.Drawing.Point(13, 29);
+            this.mKVContainer.Name = "mKVContainer";
+            this.mKVContainer.Size = new System.Drawing.Size(358, 108);
+            this.mKVContainer.TabIndex = 10;
+            this.mKVContainer.TabStop = false;
+            this.mKVContainer.Text = "Key-Value";
             // 
-            // textBox1
+            // textBox2
             // 
-            this.textBox1.Location = new System.Drawing.Point(136, 44);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(108, 21);
-            this.textBox1.TabIndex = 8;
+            this.textBox2.Location = new System.Drawing.Point(136, 69);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(108, 21);
+            this.textBox2.TabIndex = 10;
             // 
             // comboBox2
             // 
@@ -228,19 +234,37 @@
             this.comboBox2.Size = new System.Drawing.Size(114, 20);
             this.comboBox2.TabIndex = 9;
             // 
-            // textBox2
+            // textBox1
             // 
-            this.textBox2.Location = new System.Drawing.Point(136, 69);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(108, 21);
-            this.textBox2.TabIndex = 10;
+            this.textBox1.Location = new System.Drawing.Point(136, 44);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(108, 21);
+            this.textBox1.TabIndex = 8;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(6, 45);
+            this.comboBox1.MaxDropDownItems = 100;
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(114, 20);
+            this.comboBox1.TabIndex = 7;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(158, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(11, 12);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "=";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(826, 433);
-            this.Controls.Add(this.mKVBox);
+            this.Controls.Add(this.mKVContainer);
             this.Controls.Add(this.mWhereBox);
             this.Controls.Add(this.mUpdateBtn);
             this.Controls.Add(this.mDataView);
@@ -256,8 +280,8 @@
             this.mMenu.PerformLayout();
             this.mWhereBox.ResumeLayout(false);
             this.mWhereBox.PerformLayout();
-            this.mKVBox.ResumeLayout(false);
-            this.mKVBox.PerformLayout();
+            this.mKVContainer.ResumeLayout(false);
+            this.mKVContainer.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -277,13 +301,15 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ComboBox mDataKeyBox;
         private System.Windows.Forms.GroupBox mWhereBox;
-        private System.Windows.Forms.ComboBox mDataWhereBox;
-        private System.Windows.Forms.TextBox mWhereArg;
-        private System.Windows.Forms.GroupBox mKVBox;
+        private System.Windows.Forms.ComboBox mWhereKey;
+        private System.Windows.Forms.TextBox mWhereValue;
+        private System.Windows.Forms.GroupBox mKVContainer;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.Button 增加;
+        private System.Windows.Forms.Label label1;
     }
 }
 

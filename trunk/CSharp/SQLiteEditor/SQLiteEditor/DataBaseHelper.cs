@@ -31,10 +31,10 @@ namespace SQLiteEditor {
         public static String[] getAllTableName(SQLiteConnection con)
         {
             String[] tableNames = new String[getRowCount(con, "sqlite_master")];
-            DbDataReader reader = queryReturnReader(con, "tbl_name", "sqlite_master", "type='table'");
+            DbDataReader reader = queryReturnReader(con, "name", "sqlite_master", "type='table'");
             int index = 0;
             while (reader.Read()) {
-                tableNames[index] = reader.GetString(reader.GetOrdinal("tbl_name"));
+                tableNames[index] = reader.GetString(reader.GetOrdinal("name"));
                 Console.WriteLine("table name = " + tableNames[index]);
                 index++;
             }
@@ -86,6 +86,9 @@ namespace SQLiteEditor {
         {
             StringBuilder sb = new StringBuilder();
             foreach (var value in values) {
+                if (value.Key == null) {
+                    continue;
+                }
                 sb.Append(value.Key).Append(EQUAL).Append(value.Value).Append(COMMA);
             }
             sb.Remove(sb.ToString().LastIndexOf(COMMA), 1);
