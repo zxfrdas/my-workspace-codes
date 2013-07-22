@@ -122,8 +122,11 @@ public class ConfigManager extends Observable {
 		switch (eType)
 		{
 		case XML:
-			filePath = "/data/data/" + mContextRef.get().getPackageName() + "/shared_prefs/"
-					+ name + eType.value();
+			String temp = mContextRef.get().getFilesDir().getAbsolutePath();
+			int lastSeparate = temp.lastIndexOf("/");
+			StringBuilder builder = new StringBuilder(temp.substring(0, lastSeparate));
+			builder.append("/shared_prefs/").append(name).append(eType.value());
+			filePath = builder.toString();
 			break;
 
 		case PROP:

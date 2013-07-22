@@ -8,10 +8,10 @@ import android.content.Context;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 
 import com.zt.lib.exceptions.NullArgException;
@@ -25,8 +25,8 @@ import com.zt.lib.exceptions.NullArgException;
  * @param <T>
  *            {@code Adapter}中持有的数据类型
  */
-public abstract class SafeAdapter<T> extends BaseAdapter implements OnClickListener,
-		OnTouchListener, OnFocusChangeListener {
+public abstract class SafeAdapter<T> extends BaseAdapter implements OnItemClickListener,
+		OnItemSelectedListener, OnFocusChangeListener {
 
 	/**
 	 * 持有列表每个Item所需要的View元素的类。
