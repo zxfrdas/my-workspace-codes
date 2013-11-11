@@ -10,12 +10,14 @@ import java.util.Map;
 import java.util.Observable;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
-import com.zt.lib.Reflector;
-import com.zt.lib.Print;
 import com.zt.lib.collect.SingletonValueMap;
 import com.zt.lib.exceptions.NullArgException;
 import com.zt.lib.io.StreamHelper;
+import com.zt.lib.util.Print;
+import com.zt.lib.util.Reflector;
 
 /**
  * 配置文件管理类。
@@ -37,6 +39,7 @@ public class ConfigManager extends Observable {
 	private EnumConfigType eType;
 	private IConfigData mConfigData;
 	private SingletonValueMap<String, String> mNameMap;
+	private Handler mHandler;
 
 	/**
 	 * 获取ConfigManager的实例。
@@ -68,6 +71,7 @@ public class ConfigManager extends Observable {
 			updateNameMap(Reflector.getFieldNames(mConfigData),
 					Reflector.getFieldTargetNameValues(mConfigData));
 		}
+		mHandler = new Handler(Looper.getMainLooper());
 	}
 
 	private void updateNameMap(String[] names, String[] annotationNames)
@@ -325,8 +329,15 @@ public class ConfigManager extends Observable {
 
 	private void notifyConfigChanged()
 	{
-		super.setChanged();
-		super.notifyObservers(mConfigData);
+		mHandler.post(new Runnable() {
+			
+			@Override
+			public void run()
+			{
+				instance.setChanged();
+				instance.notifyObservers(mConfigData);
+			}
+		});
 	}
 
 }

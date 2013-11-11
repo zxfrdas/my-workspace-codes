@@ -6,6 +6,8 @@ import java.util.List;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
@@ -27,7 +29,7 @@ import com.zt.lib.exceptions.NullArgException;
  */
 public abstract class SafeAdapter<T> extends BaseAdapter implements OnItemClickListener,
 		OnItemSelectedListener, OnFocusChangeListener {
-
+	private static final String TAG = SafeAdapter.class.getSimpleName();
 	/**
 	 * 持有列表每个Item所需要的View元素的类。
 	 * 
@@ -59,7 +61,7 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnItemClickL
 	public SafeAdapter(Context context, int containerResId)
 	{
 		mContextRef = new WeakReference<Context>(context);
-		mHandlerRef = new WeakReference<Handler>(new Handler());
+		mHandlerRef = new WeakReference<Handler>(new Handler(Looper.getMainLooper()));
 		mInflater = (LayoutInflater) mContextRef.get().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 		mContainerResId = containerResId;
@@ -274,6 +276,17 @@ public abstract class SafeAdapter<T> extends BaseAdapter implements OnItemClickL
 					SafeAdapter.this.notifyDataSetChanged();
 				}
 			});
+		}
+	}
+
+	@Override
+	public void notifyDataSetChanged()
+	{
+		if (Thread.currentThread().getId() == Looper.getMainLooper().getThread().getId()) {
+			super.notifyDataSetChanged();
+		} else {
+			Log.e(TAG, "线程:id = " + Thread.currentThread().getId() + ", name = "
+					+ Thread.currentThread().getName() + " 试图刷新UI，被阻止");
 		}
 	}
 
