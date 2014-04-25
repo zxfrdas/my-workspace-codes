@@ -114,7 +114,12 @@ public class ConfigManager extends Observable {
 				resetToDefault(defaultName);
 			} else {
 				mRWer.loadFile(fileName, mContextRef.get());
-				reLoadAllValue();
+				try {
+					reLoadAllValue();
+				} catch (NullPointerException e) {
+					new File(filePath).delete();
+					resetToDefault(defaultName);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -246,18 +251,19 @@ public class ConfigManager extends Observable {
 	 * 
 	 * @throws IllegalArgumentException
 	 */
-	public void reLoadAllValue() throws IllegalArgumentException
+	public void reLoadAllValue() throws IllegalArgumentException, NullPointerException
 	{
 		reLoadAllValue(mRWer);
 	}
 	
-	private void reLoadAllValue(ReaderWriter rw)
+	private void reLoadAllValue(ReaderWriter rw) throws NullPointerException
 	{
 		if (null == mConfigData) {
 			return;
 		}
 		Map<String, ?> map = rw.getAll();
 		for (Map.Entry<String, ?> entry : map.entrySet()) {
+			Print.d("key = " + entry.getKey() + ", value = " + entry.getValue());
 			try {
 				Reflector.setFieldValue(mConfigData, mNameMap.getKeyByValue(entry.getKey()),
 						entry.getValue());

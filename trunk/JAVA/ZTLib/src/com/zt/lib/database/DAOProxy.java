@@ -33,8 +33,7 @@ public class DAOProxy implements InvocationHandler {
 		long start = System.currentTimeMillis();
 		Object result = method.invoke(recorder, args);
 		long end = System.currentTimeMillis();
-		Print.d(AbsDAO.TAG, "method : " + method.getName()
-				+ " cost = " + (end - start));
+		Print.d(method.getName() + "() cost = " + (end - start));
 		return result;
 	}
 

@@ -18,7 +18,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 public abstract class AbsDAO<T, K> extends SQLiteOpenHelper
 		implements IDAO<T, K> {
 	
-	public static final String TAG = AbsDAO.class.getSimpleName();
 	private final ReentrantReadWriteLock mLock;
 	protected final ReadLock mReadLock;
 	protected final WriteLock mWriteLock;
@@ -27,10 +26,10 @@ public abstract class AbsDAO<T, K> extends SQLiteOpenHelper
 	public AbsDAO(Context context, String name, int version)
 	{
 		super(context, name, null, version);
-		mDatabase = getWritableDatabase();
 		mLock = new ReentrantReadWriteLock();
 		mReadLock = mLock.readLock();
 		mWriteLock = mLock.writeLock();
+		mDatabase = getWritableDatabase();
 	}
 
 }
