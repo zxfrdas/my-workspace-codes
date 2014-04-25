@@ -13,5 +13,6 @@
 	<classpathentry exported="true" kind="lib" path="/ApacheLibs/HTTP/httpclient-cache-4.2.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="/ApacheLibs/HTTP/httpcore-4.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="/ApacheLibs/HTTP/httpmime-4.2-zt.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

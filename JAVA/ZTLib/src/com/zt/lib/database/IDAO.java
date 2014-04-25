@@ -48,7 +48,7 @@ public interface IDAO<T, K> {
 	 * @param items 试图插入的数据类集合
 	 * @return 成功返回{@code true}，反之{@code false}
 	 */
-	public boolean insertAll(String table, List<T> items);
+	public boolean insertList(String table, List<T> items);
 
 	/**
 	 * 数据库多条删除操作
@@ -56,7 +56,14 @@ public interface IDAO<T, K> {
 	 * @param items 试图删除的数据类集合
 	 * @return 成功返回{@code true}，反之{@code false}
 	 */
-	public boolean deleteAll(String table, List<T> items);
+	public boolean deleteList(String table, List<T> items);
+	
+	/**
+	 * 数据库表删除所有条目操作
+	 * @param table 进行删除操作的表名
+	 * @return 成功返回{@code true}，反之{@code false}
+	 */
+	public boolean deleteAll(String table);
 	
 	/**
 	 * 数据库多条更新操作
@@ -64,7 +71,7 @@ public interface IDAO<T, K> {
 	 * @param items 试图更新的数据类集合
 	 * @return 成功返回{@code true}，反之{@code false}
 	 */
-	public boolean updateAll(String table, List<T> items);
+	public boolean updateList(String table, List<T> items);
 	
 	/**
 	 * 数据库查询表中所有数据
@@ -81,4 +88,9 @@ public interface IDAO<T, K> {
 	 */
 	public int getCount(String table);
 	
+	
+	/**
+	 * 关闭数据库
+	 */
+	public void close();
 }

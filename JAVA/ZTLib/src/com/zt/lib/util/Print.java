@@ -27,8 +27,10 @@ public class Print {
 		if (printable) {
 			StackTraceElement line = new Throwable().getStackTrace()[1];
 			if (line != null) {
-				Log.d(TAG, "File[" + line.getFileName() + "]Line[" + line.getLineNumber()
-						+ "]Msg[" + msg + "]");
+				Log.d(TAG,
+						"[" + line.getFileName() + ":"
+								+ line.getLineNumber() + "]: "
+								+ line.getMethodName() + "() " + msg);
 			}
 		}
 	}
@@ -38,8 +40,10 @@ public class Print {
 		if (printable) {
 			StackTraceElement line = new Throwable().getStackTrace()[1];
 			if (line != null) {
-				Log.d(TAG, "File[" + line.getFileName() + "]Line[" + line.getLineNumber()
-						+ "]Msg[" + msg + "]");
+				Log.d(TAG,
+						"[" + line.getFileName() + ":"
+								+ line.getLineNumber() + "]: "
+								+ line.getMethodName() + "() " + msg);
 			}
 		}
 	}
@@ -49,8 +53,11 @@ public class Print {
 		if (printable) {
 			StackTraceElement line = new Throwable().getStackTrace()[1];
 			if (line != null) {
-				Log.d(TAG, "[" + line.getFileName() + " : " + line.getLineNumber()
-						+ "]: " + o.toString());
+				Log.d(TAG,
+						"[" + line.getFileName() + ":"
+								+ line.getLineNumber() + "]: "
+								+ line.getMethodName() + "() "
+								+ o.toString());
 			}
 		}
 	}
@@ -60,8 +67,10 @@ public class Print {
 		if (printable) {
 			StackTraceElement line = new Throwable().getStackTrace()[1];
 			if (line != null) {
-				Log.w(TAG, "[" + line.getFileName() + " : " + line.getLineNumber()
-						+ "]: " + msg);
+				Log.d(TAG,
+						"[" + line.getFileName() + ":"
+								+ line.getLineNumber() + "]: "
+								+ line.getMethodName() + "() " + msg);
 			}
 		}
 	}
@@ -71,8 +80,10 @@ public class Print {
 		if (printable) {
 			StackTraceElement line = new Throwable().getStackTrace()[1];
 			if (line != null) {
-				Log.i(TAG, "[" + line.getFileName() + " : " + line.getLineNumber()
-						+ "]: " + msg);
+				Log.d(TAG,
+						"[" + line.getFileName() + ":"
+								+ line.getLineNumber() + "]: "
+								+ line.getMethodName() + "() " + msg);
 			}
 		}
 	}
