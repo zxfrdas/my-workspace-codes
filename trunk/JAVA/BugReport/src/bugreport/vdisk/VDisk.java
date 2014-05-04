@@ -23,13 +23,11 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.HttpConnectionParams;
 
 import android.text.format.Time;
 import bugreport.HMACSHA1;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import com.alibaba.fastjson.JSON;
 
 public class VDisk
 {
@@ -79,17 +77,12 @@ public class VDisk
     		post.setEntity(new UrlEncodedFormEntity(getTokenParams()));
 			HttpResponse httpResponse = client.execute(post);
 			InputStream iss = httpResponse.getEntity().getContent();
-			Gson gson = new Gson();
-			mBaseInfo = gson.fromJson(readStream(iss), BaseInfo.class);
+			mBaseInfo = JSON.parseObject(readStream(iss), BaseInfo.class);
 			TOKEN = mBaseInfo.data.token;
 		}
 		catch (UnsupportedEncodingException e1)
 		{
 			e1.printStackTrace();
-		}
-		catch (JsonSyntaxException e)
-		{
-			e.printStackTrace();
 		}
 		catch (IOException e)
 		{
@@ -117,8 +110,7 @@ public class VDisk
 		{
 			post.setEntity(new UrlEncodedFormEntity(keepTokenParams()));
 			HttpResponse httpResponse = client.execute(post);
-			Gson gson = new Gson();
-			mBaseInfo = gson.fromJson(readStream(httpResponse.getEntity().getContent()), BaseInfo.class);
+			mBaseInfo = JSON.parseObject(readStream(httpResponse.getEntity().getContent()), BaseInfo.class);
 		}
 		catch (UnsupportedEncodingException e)
 		{
@@ -156,7 +148,7 @@ public class VDisk
 		{
 			post.setEntity(new UrlEncodedFormEntity(getDirIdParams(dir)));
 			HttpResponse httpResponse = client.execute(post);
-			mBaseInfo = new Gson().fromJson(readStream(httpResponse.getEntity().getContent()), BaseInfo.class);
+			mBaseInfo = JSON.parseObject(readStream(httpResponse.getEntity().getContent()), BaseInfo.class);
 		}
 		catch (UnsupportedEncodingException e)
 		{
@@ -194,7 +186,7 @@ public class VDisk
 		{
 			post.setEntity(new UrlEncodedFormEntity(createDirParams(dir)));
 			HttpResponse httpResponse = client.execute(post);
-			mBaseInfo = new Gson().fromJson(readStream(httpResponse.getEntity().getContent()), BaseInfo.class);
+			mBaseInfo = JSON.parseObject(readStream(httpResponse.getEntity().getContent()), BaseInfo.class);
 		}
 		catch (UnsupportedEncodingException e)
 		{
@@ -231,9 +223,7 @@ public class VDisk
 		try {
 			post.setEntity(uploadEntity(file, dirId));
 			HttpResponse httpResponse = client.execute(post);
-			Gson gson = new Gson();
-			mBaseInfo = gson.fromJson(readStream(httpResponse.getEntity().getContent()),
-					BaseInfo.class);
+			mBaseInfo = JSON.parseObject(readStream(httpResponse.getEntity().getContent()), BaseInfo.class);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {
