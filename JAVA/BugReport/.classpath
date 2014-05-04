@@ -3,8 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry exported="true" kind="lib" path="/MyLibs/gson-2.2.1-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="/MyLibs/gson-2.2.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="/ApacheLibs/HTTP/commons-codec-1.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="/ApacheLibs/HTTP/commons-logging-1.1.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="/ApacheLibs/HTTP/commons-logging-1.1.1.jar"/>
@@ -14,5 +12,6 @@
 	<classpathentry exported="true" kind="lib" path="/ApacheLibs/HTTP/httpcore-4.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="/ApacheLibs/HTTP/httpmime-4.2-zt.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry exported="true" kind="lib" path="/MyLibs/fastjson-1.1.15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
