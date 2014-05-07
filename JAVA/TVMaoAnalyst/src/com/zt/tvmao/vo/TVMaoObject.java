@@ -2,7 +2,7 @@ package com.zt.tvmao.vo;
 
 import java.io.Serializable;
 
-import com.zt.lib.Reflector;
+import com.zt.lib.util.Reflector;
 
 /**
  * 电视猫数据类基类

@@ -4,12 +4,13 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import com.zt.lib.database.impl.SQLite3DAO;
 import com.zt.lib.util.Print;
 
 /**
  * 动态代理。
  * <p>通过此代理，每个数据库操作类，即{@code AbsDAO}的子类中每个操作方法都会打印耗时。
- * @see AbsDAO
+ * @see SQLite3DAO
  */
 public class DAOProxy implements InvocationHandler {
 
@@ -19,9 +20,9 @@ public class DAOProxy implements InvocationHandler {
 		this.recorder = recorder;
 	}
 	
-	public IDAO<?, ?> bind()
+	public IDAO<?> bind()
 	{
-		return (IDAO<?, ?>) Proxy.newProxyInstance(recorder
+		return (IDAO<?>) Proxy.newProxyInstance(recorder
 				.getClass().getClassLoader(), recorder.getClass()
 				.getSuperclass().getInterfaces(), this);
 	}

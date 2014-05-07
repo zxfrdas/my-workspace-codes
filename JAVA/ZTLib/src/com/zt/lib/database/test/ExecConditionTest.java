@@ -64,7 +64,7 @@ public class ExecConditionTest {
 	@Test
 	public void testEqual()
 	{
-		execCondition = ExecCondition.Build().where("column1").equal(1).done();
+		execCondition = ExecCondition.Build().where("column1").equal(true).done();
 		String[] args = execCondition.getWhereArgs();
 		assertEquals("column1 = ? ", execCondition.getWhereClause());
 		assertEquals(1 + "", args[0]);

@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre7"/>
-	<classpathentry kind="lib" path="/MyLibs/jsoup-1.7.2.jar" sourcepath="/MyLibs/jsoup-1.7.2-sources.jar"/>
 	<classpathentry kind="lib" path="/MyLibs/ZTLib.jar"/>
 	<classpathentry kind="lib" path="/ApacheLibs/HTTP/commons-codec-1.6.jar"/>
 	<classpathentry kind="lib" path="/ApacheLibs/HTTP/commons-logging-1.1.1-sources.jar"/>
@@ -23,5 +22,6 @@
 	<classpathentry kind="lib" path="/ApacheLibs/POI/ooxml-lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="/ApacheLibs/POI/ooxml-lib/stax-api-1.0.1.jar"/>
 	<classpathentry kind="lib" path="/ApacheLibs/POI/ooxml-lib/xmlbeans-2.3.0.jar"/>
+	<classpathentry kind="lib" path="/MyLibs/jsoup-1.7.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

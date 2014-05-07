@@ -14,8 +14,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.zt.lib.Reflector;
 import com.zt.lib.collect.SingletonValueMap;
+import com.zt.lib.util.Reflector;
 import com.zt.taobao.Item;
 
 public class ExcelOutput implements IOutput {

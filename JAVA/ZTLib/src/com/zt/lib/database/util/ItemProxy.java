@@ -9,31 +9,28 @@ import java.util.Map.Entry;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.zt.lib.database.Column;
-import com.zt.lib.database.SQLite3DataType;
-import com.zt.lib.database.Table;
-import com.zt.lib.util.Reflector;
-
 public class ItemProxy<T> {
 	
 	private static class ColumnItem {
-		private int index;
-		private String name;
-		private SQLite3DataType type;
-		private Field field;
+		int index;
+		String name;
+		SQLite3DataType type;
+		Field field;
 	}
 	
 	private static class RowItem {
-		private Map<Integer, ColumnItem> columns = new HashMap<Integer, ItemProxy.ColumnItem>();
+		String table;
+		ColumnItem primary;
+		Map<Integer, ColumnItem> index_Item = new HashMap<Integer, ItemProxy.ColumnItem>();
+		Map<String, ColumnItem> name_Item = new HashMap<String, ItemProxy.ColumnItem>();
+		Map<String, ColumnItem> field_Item = new HashMap<String, ItemProxy.ColumnItem>();
 	}
 	
-	private T item;
 	private Class<?> clazz;
 	private RowItem row;
 	
-	public ItemProxy(T item) {
-		this.item = item;
-		this.clazz = item.getClass();
+	public ItemProxy(Class<?> item) {
+		this.clazz = item;
 		this.row = new RowItem();
 		analyzeItem();
 	}
@@ -41,26 +38,65 @@ public class ItemProxy<T> {
 	private void analyzeItem() {
 		Annotation t = clazz.getAnnotation(Table.class);
 		if (null == t) throw new NullPointerException("Must Have Table Name");
-		Field[] fields = Reflector.getFields(item);
+		row.table = ((Table) t).name();
+		Field[] fields = clazz.getDeclaredFields();
 		for (Field field : fields) {
 			Annotation c = field.getAnnotation(Column.class);
 			if (null != c) {
 				ColumnItem column = new ColumnItem();
 				if (0 == ((Column) c).index()) {
 					// primary id, ignore
+					row.primary = new ColumnItem();
+					row.primary.index = 0;
+					row.primary.name = ((Column) c).name();
 					continue;
 				}
 				column.index = ((Column) c).index();
 				column.name = ((Column) c).name();
 				column.type = ((Column) c).type();
 				column.field = field;
-				row.columns.put(column.index, column);
+				row.index_Item.put(column.index, column);
+				row.name_Item.put(column.name, column);
+				row.field_Item.put(field.getName(), column);
 			}
 		}
 	}
 	
+	public String getTableName() {
+		return row.table;
+	}
+	
+	public String getTableCreator() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("create table ").append(row.table);
+		if (null == row.primary) {
+			row.primary = new ColumnItem();
+			row.primary.index = 0;
+			row.primary.name = "_id";
+		}
+		sb.append("(").append(row.primary.name).append(" integer primary key autoincrement, ");
+		final int total = row.name_Item.size();
+		int index = 0;
+		for (ColumnItem item : row.name_Item.values()) {
+			sb.append(item.name).append(" ").append(item.type.toString());
+			if (index < total) {
+				sb.append(", ");
+			} else {
+				sb.append(");");
+			}
+			index ++;
+		}
+		return sb.toString();
+	}
+	
 	public T getItemFromDB(Cursor c) throws IllegalAccessException, IllegalArgumentException {
-		for (Entry<Integer, ColumnItem> map : row.columns.entrySet()) {
+		T item = null;
+		try {
+			item = (T) clazz.newInstance();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		}
+		for (Entry<Integer, ColumnItem> map : row.index_Item.entrySet()) {
 			int index = map.getKey();
 			SQLite3DataType sqlite3type = map.getValue().type;
 			Field field = map.getValue().field;
@@ -103,12 +139,22 @@ public class ItemProxy<T> {
 		return item;
 	}
 	
-	public ContentValues getContentValues() throws IllegalAccessException, IllegalArgumentException {
+	public ContentValues getContentValues(T item) throws IllegalAccessException,
+			IllegalArgumentException {
+		return getContentValues(item, (String[]) row.field_Item.keySet().toArray());
+	}
+	
+	public ContentValues getContentValues(T item, String... fields)
+			throws IllegalAccessException, IllegalArgumentException {
 		ContentValues values = new ContentValues();
-		for (Entry<Integer, ColumnItem> map : row.columns.entrySet()) {
-			String name = map.getValue().name;
-			SQLite3DataType sqlite3type = map.getValue().type;
-			Field field = map.getValue().field;
+		for (String column : fields) {
+			if (!row.field_Item.containsKey(column)) {
+				return values;
+			}
+			ColumnItem need = row.field_Item.get(column);
+			String name = need.name;
+			SQLite3DataType sqlite3type = need.type;
+			Field field = need.field;
 			Class<?> fieldType = field.getType();
 			switch (sqlite3type)
 			{
