@@ -1,5 +1,6 @@
 package com.zt.lib.database.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
@@ -33,11 +34,11 @@ public abstract class SQLite3DAO<T> extends SQLiteOpenHelper implements IDAO<T> 
 	public SQLite3DAO(Context context, String name, int version, Class<?> item)
 	{
 		super(context, name, null, version);
+		mItemProxy = new ItemProxy<T>(item);
 		mLock = new ReentrantReadWriteLock();
 		mReadLock = mLock.readLock();
 		mWriteLock = mLock.writeLock();
 		mDatabase = getWritableDatabase();
-		mItemProxy = new ItemProxy<T>(item);
 	}
 
 	@Override
@@ -69,7 +70,36 @@ public abstract class SQLite3DAO<T> extends SQLiteOpenHelper implements IDAO<T> 
 	@Override
 	public boolean insert(List<T> items)
 	{
-		// TODO Auto-generated method stub
+		long ret = -1;
+		ArrayList<ContentValues> values = new ArrayList<ContentValues>();
+		for (T item : items) {
+			ContentValues value = null;
+			try {
+				value = mItemProxy.getContentValues(item);
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				e1.printStackTrace();
+			}
+			values.add(value);
+		}
+		mWriteLock.lock();
+		mDatabase.beginTransaction();
+		try {
+			for (ContentValues v : values) {
+				ret = mDatabase.insert(mItemProxy.getTableName(), null, v);
+			}
+			mDatabase.setTransactionSuccessful();
+		} catch (SQLiteException e) {
+			e.printStackTrace();
+			ret = -1;
+		} finally {
+			mDatabase.endTransaction();
+			mWriteLock.unlock();
+		}
+		if (-1 != ret) {
+			return true;
+		}
 		return false;
 	}
 
@@ -97,7 +127,28 @@ public abstract class SQLite3DAO<T> extends SQLiteOpenHelper implements IDAO<T> 
 	@Override
 	public boolean update(T item, ExecCondition condition)
 	{
-		// TODO Auto-generated method stub
+		long ret = -1;
+		ContentValues values = null;
+		try {
+			values = mItemProxy.getContentValues(item);
+		} catch (IllegalAccessException e1) {
+			e1.printStackTrace();
+		} catch (IllegalArgumentException e1) {
+			e1.printStackTrace();
+		}
+		mWriteLock.lock();
+		try {
+			condition.setWhereColumns(mItemProxy.getColumnName(condition.getWhereFields()));
+			ret = mDatabase.update(mItemProxy.getTableName(), values, condition.getWhereClause(),
+					condition.getWhereArgs());
+		} catch (SQLiteException e) {
+			e.printStackTrace();
+		} finally {
+			mWriteLock.unlock();
+		}
+		if (-1 != ret) {
+			return true;
+		}
 		return false;
 	}
 
@@ -132,8 +183,10 @@ public abstract class SQLite3DAO<T> extends SQLiteOpenHelper implements IDAO<T> 
 	@Override
 	public int getCount()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		mReadLock.lock();
+		int count = mDatabase.query(mItemProxy.getTableName(), null, null, null, null, null, null).getCount();
+		mReadLock.unlock();
+		return count;
 	}
 
 }
