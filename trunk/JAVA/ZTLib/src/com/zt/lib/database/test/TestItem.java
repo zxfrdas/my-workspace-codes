@@ -1,8 +1,8 @@
 package com.zt.lib.database.test;
 
-import com.zt.lib.database.Column;
-import com.zt.lib.database.SQLite3DataType;
-import com.zt.lib.database.Table;
+import com.zt.lib.database.util.Column;
+import com.zt.lib.database.util.SQLite3DataType;
+import com.zt.lib.database.util.Table;
 
 @Table(name="tbl_Test")
 public class TestItem {

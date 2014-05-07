@@ -183,6 +183,13 @@ public class ExecCondition {
 		List<String> args = new ArrayList<String>();
 		for (Where where : mWheres) {
 			for (String arg : where.args) {
+				// if arg is boolean and type is number
+				// we make true -> 1 & false -> 0
+				if (Where.EnumArgType.NUMBER == where.argType) {
+					if ("true".equals(arg) || "false".equals(arg)) {
+						arg = (Boolean.valueOf(arg) ? 1 : 0) + "";
+					}
+				}
 				args.add(arg);
 			}
 		}
