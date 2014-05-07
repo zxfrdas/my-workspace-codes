@@ -39,7 +39,7 @@ public class ExecCondition {
 		private String column;
 	}
 	
-	private static final String PLACE_HOLDER_TEXT = "'?' ";
+//	private static final String PLACE_HOLDER_TEXT = "'?' ";
 	private static final String PLACE_HOLDER_NUMBER = "? ";
 	private static final String AND = "AND ";
 	private List<Where> mWheres;
@@ -151,6 +151,23 @@ public class ExecCondition {
 		return this;
 	}
 	
+	public String[] getWhereFields() {
+		String[] result = new String[mWheres.size()];
+		int index = 0;
+		for (Where where : mWheres) {
+			result[index] = where.column;
+			index ++;
+		}
+		return result;
+	}
+	
+	public void setWhereColumns(String[] names) {
+		int index = 0;
+		for (Where where : mWheres) {
+			where.column = names[index];
+		}
+	}
+	
 	public String getWhereClause() {
 		StringBuilder sb = new StringBuilder();			
 		for (Where where : mWheres) {
@@ -163,11 +180,11 @@ public class ExecCondition {
 				argNumber = 1;
 			}
 			for (int i = 0; i < argNumber; i ++) {
-				if (Where.EnumArgType.TEXT == where.argType) {
-					sb.append(PLACE_HOLDER_TEXT);
-				} else {
+//				if (Where.EnumArgType.TEXT == where.argType) {
+//					sb.append(PLACE_HOLDER_TEXT);
+//				} else {
 					sb.append(PLACE_HOLDER_NUMBER);
-				}
+//				}
 				sb.append(AND);
 			}
 		}

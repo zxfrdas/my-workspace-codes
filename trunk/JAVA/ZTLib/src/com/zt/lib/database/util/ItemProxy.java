@@ -79,12 +79,12 @@ public class ItemProxy<T> {
 		int index = 0;
 		for (ColumnItem item : row.name_Item.values()) {
 			sb.append(item.name).append(" ").append(item.type.toString());
+			index ++;
 			if (index < total) {
 				sb.append(", ");
 			} else {
 				sb.append(");");
 			}
-			index ++;
 		}
 		return sb.toString();
 	}
@@ -141,7 +141,8 @@ public class ItemProxy<T> {
 	
 	public ContentValues getContentValues(T item) throws IllegalAccessException,
 			IllegalArgumentException {
-		return getContentValues(item, (String[]) row.field_Item.keySet().toArray());
+		return getContentValues(item,
+				row.field_Item.keySet().toArray(new String[row.field_Item.keySet().size()]));
 	}
 	
 	public ContentValues getContentValues(T item, String... fields)
@@ -183,7 +184,7 @@ public class ItemProxy<T> {
 				break;
 				
 			case TEXT:
-				values.put(name, field.get(item).toString());
+				values.put(name, field.get(item) + "");
 				break;
 				
 			case NULL:
@@ -192,6 +193,16 @@ public class ItemProxy<T> {
 			}
 		}
 		return values;
+	}
+	
+	public String[] getColumnName(String... fieldName) {
+		String[] result = new String[fieldName.length];
+		int index = 0;
+		for (String s : fieldName) {
+			result[index] = row.field_Item.get(s).name;
+			index ++;
+		}
+		return result;
 	}
 	
 }
