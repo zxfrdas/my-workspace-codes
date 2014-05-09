@@ -2,7 +2,9 @@ package com.zt.lib.database.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -89,54 +91,62 @@ public class ItemProxy<T> {
 		return sb.toString();
 	}
 	
-	public T getItemFromDB(Cursor c) throws IllegalAccessException, IllegalArgumentException {
-		T item = null;
-		try {
-			item = (T) clazz.newInstance();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		}
-		for (Entry<Integer, ColumnItem> map : row.index_Item.entrySet()) {
-			int index = map.getKey();
-			SQLite3DataType sqlite3type = map.getValue().type;
-			Field field = map.getValue().field;
-			Class<?> fieldType = field.getType();
-			switch (sqlite3type)
-			{
-			case BLOB:
-				field.set(item, c.getBlob(index));
-				break;
-				
-			case INTEGER:
-				if (boolean.class.equals(fieldType) || Boolean.class.equals(fieldType)) {
-					field.set(item, 1 == c.getInt(index) ? true : false);
-				} else if (int.class.equals(fieldType) || Integer.class.equals(fieldType)) {
-					field.set(item, c.getInt(index));
-				} else if (long.class.equals(fieldType) || Long.class.equals(fieldType)) {
-					field.set(item, c.getLong(index));
-				} else if (short.class.equals(fieldType) || Short.class.equals(fieldType)) {
-					field.set(item, c.getShort(index));
-				}
-				break;
-				
-			case REAL:
-				if (float.class.equals(fieldType) || Float.class.equals(fieldType)) {
-					field.set(item, c.getFloat(index));
-				} else if (double.class.equals(fieldType) || Double.class.equals(fieldType)) {
-					field.set(item, c.getDouble(index));
-				}
-				break;
-				
-			case TEXT:
-				field.set(item, c.getString(index));
-				break;
-				
-			case NULL:
-			default:
-				break;
+	public List<T> getItemFromDB(Cursor c) throws IllegalAccessException,
+			IllegalArgumentException {
+		List<T> items = new ArrayList<T>();
+		while (null != c && c.moveToNext()) {
+			T item = null;
+			try {
+				item = (T) clazz.newInstance();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
 			}
+			for (Entry<Integer, ColumnItem> map : row.index_Item.entrySet()) {
+				int index = map.getKey();
+				SQLite3DataType sqlite3type = map.getValue().type;
+				Field field = map.getValue().field;
+				Class<?> fieldType = field.getType();
+				switch (sqlite3type)
+				{
+				case BLOB:
+					field.set(item, c.getBlob(index));
+					break;
+					
+				case INTEGER:
+					if (boolean.class.equals(fieldType) || Boolean.class.equals(fieldType)) {
+						field.set(item, 1 == c.getInt(index) ? true : false);
+					} else if (int.class.equals(fieldType) || Integer.class.equals(fieldType)) {
+						field.set(item, c.getInt(index));
+					} else if (long.class.equals(fieldType) || Long.class.equals(fieldType)) {
+						field.set(item, c.getLong(index));
+					} else if (short.class.equals(fieldType) || Short.class.equals(fieldType)) {
+						field.set(item, c.getShort(index));
+					}
+					break;
+					
+				case REAL:
+					if (float.class.equals(fieldType) || Float.class.equals(fieldType)) {
+						field.set(item, c.getFloat(index));
+					} else if (double.class.equals(fieldType) || Double.class.equals(fieldType)) {
+						field.set(item, c.getDouble(index));
+					}
+					break;
+					
+				case TEXT:
+					field.set(item, c.getString(index));
+					break;
+					
+				case NULL:
+				default:
+					break;
+				}
+			}
+			items.add(item);
 		}
-		return item;
+		if (null != c) {
+			c.close();
+		}
+		return items;
 	}
 	
 	public ContentValues getContentValues(T item) throws IllegalAccessException,
