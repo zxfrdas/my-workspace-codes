@@ -8,6 +8,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -106,21 +107,38 @@ public abstract class SQLite3DAO<T> extends SQLiteOpenHelper implements IDAO<T> 
 	@Override
 	public boolean delete(ExecCondition condition)
 	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean delete(List<T> items, ExecCondition condition)
-	{
-		// TODO Auto-generated method stub
+		long ret = 0;
+		condition.setWhereColumns(mItemProxy.getColumnName(condition.getWhereFields()));
+		mWriteLock.lock();
+		try {
+			ret = mDatabase.delete(mItemProxy.getTableName(),
+					condition.getWhereClause(), condition.getWhereArgs());
+		} catch (SQLiteException e) {
+			e.printStackTrace();
+		} finally {
+			mWriteLock.unlock();
+		}
+		if (0 != ret) {
+			return true;
+		}
 		return false;
 	}
 
 	@Override
 	public boolean deleteAll()
 	{
-		// TODO Auto-generated method stub
+		long ret = 0;
+		mWriteLock.lock();
+		try {
+			ret = mDatabase.delete(mItemProxy.getTableName(), null, null);
+		} catch (SQLiteException e) {
+			e.printStackTrace();
+		} finally {
+			mWriteLock.unlock();
+		}
+		if (1 == ret) {
+			return true;
+		}
 		return false;
 	}
 
@@ -136,9 +154,9 @@ public abstract class SQLite3DAO<T> extends SQLiteOpenHelper implements IDAO<T> 
 		} catch (IllegalArgumentException e1) {
 			e1.printStackTrace();
 		}
+		condition.setWhereColumns(mItemProxy.getColumnName(condition.getWhereFields()));
 		mWriteLock.lock();
 		try {
-			condition.setWhereColumns(mItemProxy.getColumnName(condition.getWhereFields()));
 			ret = mDatabase.update(mItemProxy.getTableName(), values, condition.getWhereClause(),
 					condition.getWhereArgs());
 		} catch (SQLiteException e) {
@@ -155,36 +173,99 @@ public abstract class SQLite3DAO<T> extends SQLiteOpenHelper implements IDAO<T> 
 	@Override
 	public boolean updateList(List<T> items, ExecCondition condition)
 	{
-		// TODO Auto-generated method stub
+		long ret = -1;
+		ArrayList<ContentValues> values = new ArrayList<ContentValues>();
+		for (T item : items) {
+			ContentValues value = null;
+			try {
+				value = mItemProxy.getContentValues(item);
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				e1.printStackTrace();
+			}
+			values.add(value);
+		}
+		condition.setWhereColumns(mItemProxy.getColumnName(condition.getWhereFields()));
+		mWriteLock.lock();
+		mDatabase.beginTransaction();
+		try {
+			for (ContentValues value : values) {
+				ret = mDatabase.update(mItemProxy.getTableName(), value,
+						condition.getWhereClause(), condition.getWhereArgs());
+			}
+			mDatabase.endTransaction();
+		} catch (SQLiteException e) {
+			e.printStackTrace();
+			ret = -1;
+		} finally {
+			mDatabase.endTransaction();
+			mWriteLock.unlock();
+		}
+		if (-1 != ret) {
+			return true;
+		}
 		return false;
 	}
 
 	@Override
 	public boolean updateAll(T item)
 	{
-		// TODO Auto-generated method stub
+		long ret = -1;
+		ContentValues values = null;
+		try {
+			values = mItemProxy.getContentValues(item);
+		} catch (IllegalAccessException e1) {
+			e1.printStackTrace();
+		} catch (IllegalArgumentException e1) {
+			e1.printStackTrace();
+		}
+		mWriteLock.lock();
+		try {
+			ret = mDatabase.update(mItemProxy.getTableName(), values, null, null);
+		} catch (SQLiteException e) {
+			e.printStackTrace();
+		} finally {
+			mWriteLock.unlock();
+		}
+		if (-1 != ret) {
+			return true;
+		}
 		return false;
 	}
 
 	@Override
-	public T query(ExecCondition condition)
+	public List<T> query(ExecCondition condition)
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<T> queryAll(ExecCondition condition)
-	{
-		// TODO Auto-generated method stub
-		return null;
+		Cursor c = null;
+		condition.setWhereColumns(mItemProxy.getColumnName(condition.getWhereFields()));
+		mReadLock.lock();
+		try {
+			c = mDatabase.query(mItemProxy.getTableName(), null,
+					condition.getWhereClause(), condition.getWhereArgs(), null,
+					null, condition.getOrderby());
+		} catch (SQLiteException e) {
+			e.printStackTrace();
+		} finally {
+			mReadLock.unlock();
+		}
+		List<T> items = null;
+		try {
+			items = mItemProxy.getItemFromDB(c);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+		return items;
 	}
 
 	@Override
 	public int getCount()
 	{
 		mReadLock.lock();
-		int count = mDatabase.query(mItemProxy.getTableName(), null, null, null, null, null, null).getCount();
+		int count = mDatabase.query(mItemProxy.getTableName(), null, null, null,
+				null, null, null).getCount();
 		mReadLock.unlock();
 		return count;
 	}
